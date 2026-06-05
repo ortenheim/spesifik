@@ -1,1439 +1,890 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Et åpent rammeverk som binder spec, kode, tester og Azure DevOps i én lukket sløyfe — bygget for norsk offentlig sektor.">
 <title>spesifik — Spec-driven utvikling for norsk offentlig sektor</title>
-<meta name="description" content="Et åpent rammeverk som binder spec, kode, tester og Azure DevOps i én lukket sløyfe — bygget for norsk offentlig sektor." />
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0E1116;
-    --surface: #171C23;
-    --surface-hi: #1F252E;
-    --border: #2A323D;
-    --border-hi: #3A4452;
-    --text: #ECE7DB;
-    --text-mid: #9A9489;
-    --text-dim: #5A554C;
-    --gold: #D4A95C;
-    --gold-dim: #8A6E3A;
-    --gold-bg: #2A2418;
-    --blue: #6B97B5;
-    --blue-dim: #3E5E78;
-    --red: #A36760;
-    --green: #7A9968;
+:root{
+  --gold:#C9A84C;--gold-light:#E8C96A;
+  --gold-dim:rgba(201,168,76,0.18);--gold-dim2:rgba(201,168,76,0.07);
+  --bg:#0E0E0E;--bg2:#141414;--bg3:#1A1A1A;--bg4:#212121;
+  --text:#F0EDE6;--text-muted:#8A8680;--text-dim:#4E4A47;
+  --border:rgba(255,255,255,0.07);--border-gold:rgba(201,168,76,0.25);
+  --red:#E05C4A;--green:#5BAD7F;--blue:#5B8FBD;
+  --purple:#7B6FCC;--coral:#CC7B5A;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(14,14,14,0.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-brand{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--gold);letter-spacing:.04em;text-decoration:none}
+.nav-badge{font-size:10px;background:var(--gold-dim);color:var(--gold);border:1px solid var(--border-gold);padding:1px 6px;border-radius:3px;margin-left:8px;vertical-align:middle;letter-spacing:.06em}
+.nav-links{display:flex;gap:1.5rem;list-style:none}
+.nav-links a{font-size:13px;color:var(--text-muted);text-decoration:none;letter-spacing:.02em;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{font-size:12px;color:var(--gold)!important;border:1px solid var(--border-gold)!important;padding:4px 12px;border-radius:3px;transition:background .2s!important}
+.nav-cta:hover{background:var(--gold-dim)!important}
+.wrap{max-width:960px;margin:0 auto;padding:6rem 2rem}
+.divider{height:1px;background:var(--border)}
+.s-label{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem}
+h2.s-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;line-height:1.15;margin-bottom:1rem}
+h2.s-title em{font-style:italic;color:var(--gold-light)}
+.s-lead{font-size:16px;color:var(--text-muted);max-width:580px;line-height:1.75;margin-bottom:3rem}
+.s-lead a{color:var(--gold);text-decoration:none}
+.btn-primary{display:inline-block;background:var(--gold);color:#0E0E0E;font-size:13px;font-weight:600;padding:10px 22px;border-radius:3px;text-decoration:none;letter-spacing:.03em;transition:background .2s,transform .1s}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-ghost{display:inline-block;color:var(--text-muted);font-size:13px;padding:10px 22px;border-radius:3px;border:1px solid var(--border);text-decoration:none;letter-spacing:.02em;transition:border-color .2s,color .2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
 
-    --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-    --font-mono: "JetBrains Mono", "SF Mono", Monaco, Consolas, monospace;
+/* CONNECTING STRIP — gold thread between every section */
+.connect-strip{
+  border-top:1px solid var(--border-gold);border-bottom:1px solid var(--border-gold);
+  background:linear-gradient(90deg,transparent 0%,var(--gold-dim2) 30%,var(--gold-dim2) 70%,transparent 100%);
+  padding:.85rem 2rem;
+  display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;
+}
+.connect-label{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.connect-links{display:flex;gap:.6rem;flex-wrap:wrap}
+.cl{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:var(--mono);font-size:11px;color:var(--gold);
+  text-decoration:none;background:var(--gold-dim2);border:1px solid var(--border-gold);
+  padding:3px 10px;border-radius:2px;transition:background .2s,color .2s;white-space:nowrap;
+}
+.cl:hover{background:var(--gold-dim);color:var(--gold-light)}
+.cl .a{font-size:9px;opacity:.7}
 
-    --max-width: 1240px;
-    --gutter: clamp(1.5rem, 4vw, 3.5rem);
-  }
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 2rem 4rem;max-width:960px;margin:0 auto}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero h1{font-family:var(--serif);font-size:clamp(3rem,7vw,5.5rem);font-weight:400;line-height:1.05;letter-spacing:-.01em;margin-bottom:1.5rem}
+.hero h1 em{font-style:italic;color:var(--gold-light)}
+.hero-sub{font-size:17px;color:var(--text-muted);max-width:560px;margin-bottom:2.5rem;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:4rem}
+/* HERO TOC */
+.hero-toc{display:flex;gap:1px;border-top:1px solid var(--border);background:var(--border);margin-top:3rem}
+.hero-toc-col{flex:1;background:var(--bg);padding:1rem .75rem 1.25rem;text-decoration:none;display:block;transition:background .15s;border-bottom:2px solid transparent}
+.hero-toc-col:hover{background:var(--bg3);border-bottom-color:var(--gold)}
+.htoc-label{display:block;font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.14em;text-transform:uppercase;margin-bottom:.6rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.htoc-items{list-style:none;margin:0;padding:0}
+.htoc-items li{font-size:11px;color:var(--text-dim);padding:2px 0;line-height:1.5;transition:color .15s}
+.hero-toc-col:hover .htoc-items li{color:var(--text-muted)}
+.hero-toc-col:hover .htoc-label{color:var(--gold-light)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* PROBLEM */
+.problem-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:4rem 2rem}
+.problem-inner{max-width:960px;margin:0 auto}
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:2.5rem}
+.problem-item{background:var(--bg2);padding:1.5rem}
+.problem-num{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;margin-bottom:.5rem}
+.problem-text{font-size:14px;color:var(--text-muted);line-height:1.6}
+.problem-text strong{color:var(--text);font-weight:500}
 
-  html { scroll-behavior: smooth; }
+/* STEP ROWS */
+.elephant-steps{display:flex;flex-direction:column;gap:0;margin-top:3rem;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.step-row{display:grid;grid-template-columns:48px 1fr 200px;gap:0;border-bottom:1px solid var(--border);transition:background .15s}
+.step-row:last-child{border-bottom:none}
+.step-row:hover{background:var(--bg3)}
+.step-num-col{display:flex;align-items:flex-start;justify-content:center;padding:1.35rem 0;border-right:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em}
+.step-content{padding:1.25rem 1.5rem;border-right:1px solid var(--border)}
+.step-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:.3rem}
+.step-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+.step-links{padding:1rem;display:flex;flex-direction:column;justify-content:center;gap:.4rem}
+.sl-label{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.2rem}
+.sl{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--mono);font-size:10px;color:var(--text-dim);text-decoration:none;padding:3px 8px;border-radius:2px;border:1px solid var(--border);transition:color .2s,border-color .2s,background .2s;width:fit-content}
+.sl:hover{color:var(--gold);border-color:var(--border-gold);background:var(--gold-dim2)}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+/* ARCH */
+.arch-diagram{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;margin-top:3rem;align-items:center}
+.arch-box{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1.75rem}
+.arch-box.gold-border{border-color:var(--border-gold)}
+.arch-box-label{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem}
+.arch-box-label a{color:var(--gold);text-decoration:none;opacity:.8}
+.arch-box-label a:hover{opacity:1}
+.arch-box h3{font-family:var(--serif);font-size:1.4rem;font-weight:500;margin-bottom:.5rem}
+.arch-box p{font-size:13px;color:var(--text-muted);margin-bottom:1rem}
+.arch-items{list-style:none}
+.arch-items li{font-family:var(--mono);font-size:11px;color:var(--text-dim);padding:3px 0;border-bottom:1px solid var(--border);letter-spacing:.02em}
+.arch-items li:last-child{border-bottom:none}
+.arch-arrow{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.arch-arrow-line{width:1px;height:40px;background:linear-gradient(to bottom,transparent,var(--border-gold),transparent);margin:0 auto}
+.arch-arrow-label{font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.1em;text-align:center;white-space:nowrap}
 
-  /* Grain texture overlay */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.92 0 0 0 0 0.91 0 0 0 0 0.86 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.4;
-  }
+/* ROLES */
+.roles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.role-card{background:var(--bg2);padding:1.75rem 1.5rem}
+.role-dot{width:8px;height:8px;border-radius:50%;margin-bottom:1rem;display:inline-block}
+.role-dot.purple{background:var(--purple)}
+.role-dot.amber{background:var(--gold)}
+.role-dot.coral{background:var(--coral)}
+.role-card h3{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.25rem}
+.role-subtitle{font-family:var(--serif);font-size:1.1rem;font-style:italic;color:var(--text-muted);margin-bottom:1.25rem}
+.role-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:.4rem}
+.role-before .role-label{color:var(--red);opacity:.7}
+.role-after .role-label{color:var(--green);opacity:.8}
+.role-before,.role-after{margin-bottom:1rem}
+.role-list{list-style:none;font-size:13px;color:var(--text-muted);line-height:1.65}
+.role-list li{padding:2px 0}
+.role-list li::before{content:'— ';color:var(--text-dim)}
+.role-bridge{margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);font-size:12px;color:var(--text-dim)}
+.role-bridge strong{color:var(--gold);font-weight:500}
+.role-goto{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;margin-right:.4rem;font-family:var(--mono);font-size:10px;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:3px 8px;border-radius:2px;transition:color .2s,border-color .2s,background .2s}
+.role-goto:hover{color:var(--gold);border-color:var(--border-gold);background:var(--gold-dim2)}
+.compare-table{width:100%;border-collapse:collapse;margin-top:2rem;font-size:13px}
+.compare-table th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text-dim);text-transform:uppercase;padding:.75rem 1rem;border-bottom:1px solid var(--border);font-weight:400}
+.compare-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:first-child{font-weight:500;color:var(--text)}
+.td-b{color:var(--text-dim)!important;font-style:italic}
+.td-a{color:var(--green)!important}
 
-  main { position: relative; z-index: 2; }
+/* ARTIFACT */
+.artifact-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem}
+.artifact-visual{background:var(--bg3);border:1px solid var(--border-gold);border-radius:4px;overflow:hidden}
+.artifact-header{background:var(--bg4);border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.ad{width:6px;height:6px;border-radius:50%;display:inline-block}
+.ad.r{background:var(--red)}.ad.y{background:var(--gold)}.ad.g{background:var(--green)}
+.artifact-body{padding:1.25rem}
+.artifact-row{display:flex;align-items:flex-start;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border);font-size:12px}
+.artifact-row:last-child{border-bottom:none}
+.artifact-icon{font-family:var(--mono);font-size:10px;color:var(--gold);width:60px;flex-shrink:0;padding-top:1px}
+.artifact-row-content{flex:1;color:var(--text-muted);line-height:1.5}
+.gap-badge{display:inline-block;font-size:10px;background:rgba(224,92,74,.15);color:#E89080;border:1px solid rgba(224,92,74,.3);padding:1px 6px;border-radius:2px;margin-left:4px;font-family:var(--mono)}
+.ok-badge{display:inline-block;font-size:10px;background:rgba(91,173,127,.12);color:var(--green);border:1px solid rgba(91,173,127,.25);padding:1px 6px;border-radius:2px;margin-left:4px;font-family:var(--mono)}
+.artifact-text{padding:1.25rem}
+.artifact-text h3{font-family:var(--serif);font-size:1.4rem;font-weight:400;margin-bottom:.75rem}
+.artifact-text h3 em{font-style:italic;color:var(--gold-light)}
+.artifact-text p{font-size:14px;color:var(--text-muted);margin-bottom:1rem;line-height:1.7}
+.artifact-text a{color:var(--gold);text-decoration:none}
+.artifact-flow{display:flex;flex-direction:column;gap:.75rem;margin-top:1.5rem}
+.flow-step{display:flex;align-items:flex-start;gap:.75rem;font-size:13px;color:var(--text-muted)}
+.flow-num{font-family:var(--mono);font-size:9px;color:var(--gold);background:var(--gold-dim2);border:1px solid var(--border-gold);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rb{display:inline-block;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:2px;margin-right:4px}
+.rb.designer{background:rgba(123,111,204,.15);color:var(--purple);border:1px solid rgba(123,111,204,.25)}
+.rb.pm{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--border-gold)}
+.rb.dev{background:rgba(204,123,90,.12);color:var(--coral);border:1px solid rgba(204,123,90,.25)}
+.artifact-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem;padding:1.5rem;background:var(--bg3);border:1px solid var(--border-gold);border-radius:4px}
+.ar-label{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem}
+.ar-text{font-size:13px;color:var(--text-muted)}
+.ar-text a{color:var(--gold);text-decoration:none}
 
-  a { color: var(--gold); text-decoration: none; transition: color 0.15s; }
-  a:hover { color: var(--text); }
+/* PHASES */
+.phases-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.phase-card{background:var(--bg2);padding:1.75rem 1.25rem;text-decoration:none;display:block;transition:background .15s}
+.phase-card:hover{background:var(--bg3)}
+.phase-num{font-family:var(--mono);font-size:28px;font-weight:400;color:var(--text-dim);line-height:1;margin-bottom:.75rem;letter-spacing:-.02em}
+.phase-card h3{font-size:14px;font-weight:600;letter-spacing:.04em;margin-bottom:.25rem;text-transform:uppercase;color:var(--text)}
+.phase-tagline{font-family:var(--serif);font-size:.9rem;font-style:italic;color:var(--text-muted);margin-bottom:1rem}
+.phase-points{list-style:none}
+.phase-points li{font-size:12px;color:var(--text-dim);padding:3px 0;line-height:1.5;border-bottom:1px solid var(--border)}
+.phase-points li:last-child{border-bottom:none}
+.phase-points li::before{content:'· ';color:var(--gold)}
+.phase-who{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:1rem}
+.wb{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:2px}
+.wb.designer{background:rgba(123,111,204,.12);color:var(--purple);border:1px solid rgba(123,111,204,.2)}
+.wb.pm{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--border-gold)}
+.wb.dev{background:rgba(204,123,90,.1);color:var(--coral);border:1px solid rgba(204,123,90,.2)}
 
-  section { padding: clamp(3rem, 8vw, 6rem) var(--gutter); }
-  .wrap { max-width: var(--max-width); margin: 0 auto; }
+/* TLT */
+.tlt-timeline{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.tlt-week{background:var(--bg2);padding:1rem .75rem;text-align:center}
+.tlt-week.tight{background:var(--bg3);border-top:2px solid var(--gold)}
+.tlt-week-label{font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.tlt-week-num{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--text);line-height:1;margin-bottom:4px}
+.tlt-week.tight .tlt-week-num{color:var(--gold)}
+.tlt-week-name{font-size:11px;color:var(--text-muted);font-weight:500}
+.tlt-phases{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:2rem}
+.tlt-pd{padding:1.25rem;background:var(--bg3);border:1px solid var(--border);border-radius:4px}
+.tlt-pd.tight-bg{border-color:var(--border-gold)}
+.tlt-pd-label{font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.tlt-pd h4{font-size:14px;font-weight:600;margin-bottom:.5rem}
+.tlt-pd p{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:.75rem}
+.px{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--mono);font-size:10px;color:var(--text-dim);text-decoration:none;border:1px solid var(--border);padding:2px 7px;border-radius:2px;transition:color .2s,border-color .2s,background .2s;margin:.1rem .2rem .1rem 0}
+.px:hover{color:var(--gold);border-color:var(--border-gold);background:var(--gold-dim2)}
 
-  /* ===== TOP NAV ===== */
-  nav.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(14, 17, 22, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0.85rem var(--gutter);
-  }
-  nav.topbar .row {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-  }
-  nav.topbar .brand {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-  }
-  nav.topbar .brand .ver {
-    color: var(--text-dim);
-    font-weight: 400;
-    letter-spacing: 0.1em;
-  }
-  nav.topbar .links { display: flex; gap: 1.6rem; align-items: center; }
-  nav.topbar .links a {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-mid);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  nav.topbar .links a:hover { color: var(--gold); }
-  nav.topbar .cta {
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--gold-dim);
-    border-radius: 2px;
-    color: var(--gold) !important;
-    font-size: 0.7rem !important;
-  }
-  nav.topbar .cta:hover { background: var(--gold-bg); border-color: var(--gold); }
-  @media (max-width: 720px) {
-    nav.topbar .links a:not(.cta) { display: none; }
-  }
+/* REPOS */
+.repos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.repo-card{background:var(--bg2);padding:1.5rem}
+.repo-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem}
+.repo-name{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.04em;margin-bottom:2px}
+.repo-badge{font-size:10px;font-family:var(--mono);color:var(--text-dim);background:var(--bg4);border:1px solid var(--border);padding:1px 6px;border-radius:2px;letter-spacing:.06em}
+.repo-title{font-size:14px;font-weight:500;margin-bottom:.5rem}
+.repo-desc{font-size:12px;color:var(--text-muted);margin-bottom:1rem;line-height:1.5}
+.repo-files{list-style:none}
+.repo-files li{font-family:var(--mono);font-size:10px;color:var(--text-dim);padding:2px 0;border-bottom:1px solid var(--border);letter-spacing:.03em}
+.repo-files li:last-child{border-bottom:none}
+.repo-link{display:inline-block;margin-top:1rem;font-size:11px;color:var(--text-dim);text-decoration:none;font-family:var(--mono);letter-spacing:.04em;transition:color .2s}
+.repo-link:hover{color:var(--gold)}
+.repo-phases{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.75rem}
+.rpt{font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:2px;background:var(--gold-dim2);color:var(--gold);border:1px solid var(--border-gold)}
 
-  /* ===== HERO ===== */
-  .hero { padding-top: clamp(4rem, 10vh, 7rem); padding-bottom: clamp(3rem, 6vh, 5rem); }
-  .hero-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1.4rem;
-  }
-  .hero-wordmark {
-    font-family: var(--font-display);
-    font-size: clamp(4.5rem, 13vw, 11rem);
-    line-height: 0.92;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    font-weight: 500;
-    margin-bottom: 1.4rem;
-    position: relative;
-  }
-  .hero-wordmark .dot {
-    display: inline-block;
-    width: 0.16em;
-    height: 0.16em;
-    background: var(--gold);
-    border-radius: 50%;
-    margin-left: 0.04em;
-    vertical-align: 0.08em;
-    animation: breathe 3.5s ease-in-out infinite;
-  }
-  @keyframes breathe {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.55; transform: scale(0.88); }
-  }
-  .hero-tagline-1 {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(1.5rem, 3.2vw, 2.6rem);
-    line-height: 1.2;
-    color: var(--gold);
-    max-width: 60ch;
-    margin-bottom: 0.5rem;
-  }
-  .hero-tagline-2 {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(1.05rem, 1.9vw, 1.4rem);
-    color: var(--text-mid);
-    max-width: 55ch;
-    margin-bottom: 2.5rem;
-  }
-  .hero-statement {
-    font-size: clamp(1rem, 1.35vw, 1.18rem);
-    line-height: 1.6;
-    color: var(--text);
-    max-width: 64ch;
-    margin-bottom: 2.5rem;
-    border-left: 2px solid var(--gold);
-    padding-left: 1.4rem;
-  }
+/* CODE */
+.code-block{background:var(--bg3);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.code-header{background:var(--bg4);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.code-header span{margin-left:auto}
+.code-body{padding:1.25rem;font-family:var(--mono);font-size:12px;line-height:2;color:var(--text-muted);overflow-x:auto}
+.cc{color:var(--text-dim)}.cmd{color:var(--gold)}.cs{color:var(--green)}
+.cphase{display:inline-block;font-family:var(--mono);font-size:9px;background:var(--gold-dim2);color:var(--gold);border:1px solid var(--border-gold);padding:0 5px;border-radius:2px;margin-left:6px;vertical-align:middle}
+.code-sep{border-top:1px solid var(--border);margin:.75rem -1.25rem;padding-top:.75rem;padding-left:1.25rem}
 
-  /* Phase strip */
-  .phase-strip {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    margin: 3rem 0 1.5rem 0;
-    flex-wrap: wrap;
-  }
-  .phase-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-width: 120px;
-    position: relative;
-  }
-  .phase-node .ball {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: var(--gold);
-    margin-bottom: 0.7rem;
-  }
-  .phase-node .label {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.05em;
-    color: var(--text);
-  }
-  .phase-line {
-    flex: 0 0 60px;
-    height: 1px;
-    background: var(--gold-dim);
-    margin-top: -1.5rem;
-  }
+/* WHY NOW */
+.reasons-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:3rem}
+.reason-card{background:var(--bg2);padding:1.75rem 1.5rem}
+.reason-date{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.1em;margin-bottom:.75rem}
+.reason-card h3{font-size:15px;font-weight:500;margin-bottom:.5rem;line-height:1.4}
+.reason-card p{font-size:13px;color:var(--text-muted);line-height:1.65}
+.reason-card a{color:var(--gold);text-decoration:none}
 
-  /* Hero CTAs */
-  .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.75rem 1.4rem;
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-radius: 2px;
-    transition: all 0.18s;
-    cursor: pointer;
-  }
-  .btn.primary {
-    background: var(--gold);
-    color: var(--bg) !important;
-    border: 1px solid var(--gold);
-  }
-  .btn.primary:hover { background: var(--text); border-color: var(--text); }
-  .btn.secondary {
-    background: transparent;
-    color: var(--text) !important;
-    border: 1px solid var(--border-hi);
-  }
-  .btn.secondary:hover { border-color: var(--gold); color: var(--gold) !important; }
-  .btn .arr { font-size: 1rem; }
+/* CTA */
+.cta-section{text-align:center;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 2rem}
+.cta-section h2{font-family:var(--serif);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:400;margin-bottom:1rem}
+.cta-section h2 em{font-style:italic;color:var(--gold-light)}
+.cta-section p{font-size:16px;color:var(--text-muted);max-width:500px;margin:0 auto 2rem;line-height:1.7}
 
-  /* ===== SECTION HEADER ===== */
-  .section-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1.2rem;
-    display: block;
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-    line-height: 1.05;
-    color: var(--text);
-    font-weight: 500;
-    margin-bottom: 1.2rem;
-    letter-spacing: -0.01em;
-  }
-  .section-title em { color: var(--gold); font-style: italic; }
-  .section-lead {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
-    color: var(--text-mid);
-    max-width: 70ch;
-    margin-bottom: 3rem;
-    line-height: 1.45;
-  }
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2rem}
+.footer-brand{font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:.75rem}
+.footer-tagline{font-size:13px;color:var(--text-dim);line-height:1.6}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.75rem}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:.4rem}
+.footer-col ul a{font-size:13px;color:var(--text-dim);text-decoration:none;transition:color .2s}
+.footer-col ul a:hover{color:var(--text-muted)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-dim);font-family:var(--mono);letter-spacing:.04em}
 
-  /* Section divider */
-  .div-line {
-    height: 1px;
-    background: var(--border);
-    margin: 0 var(--gutter);
-    max-width: var(--max-width);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* ===== PROBLEM / SOLUTION ===== */
-  .ps-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .ps-col {
-    padding: 2rem 0;
-  }
-  .ps-col.problem { border-right: 1px solid var(--border); padding-right: 2.5rem; }
-  .ps-col.solution { padding-left: 2.5rem; }
-  .ps-col-header {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-bottom: 0.8rem;
-  }
-  .ps-col.problem .ps-col-header { color: var(--red); }
-  .ps-col.solution .ps-col-header { color: var(--gold); }
-  .ps-col-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
-    color: var(--text);
-    margin-bottom: 2rem;
-    font-weight: 500;
-  }
-  .ps-row {
-    display: grid;
-    grid-template-columns: 2.5rem 1fr;
-    margin-bottom: 1.4rem;
-    align-items: start;
-  }
-  .ps-row .num {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.95rem;
-  }
-  .ps-col.problem .ps-row .num { color: var(--text-dim); }
-  .ps-col.solution .ps-row .num { color: var(--gold); }
-  .ps-row .text {
-    font-size: 0.95rem;
-    line-height: 1.55;
-  }
-  .ps-col.problem .ps-row .text { color: var(--text-mid); }
-  .ps-col.solution .ps-row .text { color: var(--text); }
-  @media (max-width: 820px) {
-    .ps-grid { grid-template-columns: 1fr; }
-    .ps-col.problem { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; }
-    .ps-col.solution { padding-left: 0; }
-  }
-
-  /* ===== ARCHITECTURE DIAGRAM ===== */
-  .arch {
-    background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .arch-diagram {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    gap: 1rem;
-    align-items: center;
-    margin-top: 2rem;
-  }
-  .arch-card {
-    background: var(--surface-hi);
-    border: 1px solid var(--border);
-    padding: 1.6rem 1.8rem;
-    position: relative;
-  }
-  .arch-card.intent { border-left: 3px solid var(--gold); }
-  .arch-card.ops { border-left: 3px solid var(--blue); }
-  .arch-card .tag {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 0.6rem;
-  }
-  .arch-card.intent .tag { color: var(--gold); }
-  .arch-card.ops .tag { color: var(--blue); }
-  .arch-card .name {
-    font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3vw, 2.4rem);
-    color: var(--text);
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-  .arch-card .desc {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.95rem;
-    color: var(--text-mid);
-  }
-  .arch-card .files {
-    margin-top: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    letter-spacing: 0.05em;
-  }
-  .arch-conn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    min-width: 130px;
-  }
-  .arch-conn .arrow-row {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-mid);
-  }
-  .arch-conn svg { display: block; }
-  .arch-conn .label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-weight: 600;
-  }
-  .arch-conn .sublabel {
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.15em;
-    color: var(--text-dim);
-  }
-  @media (max-width: 820px) {
-    .arch-diagram { grid-template-columns: 1fr; }
-    .arch-conn { flex-direction: row; padding: 0.5rem 0; }
-  }
-
-  /* ===== FOUR PHASES ===== */
-  .phases-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  .phase-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 1.6rem;
-    position: relative;
-    transition: all 0.2s;
-  }
-  .phase-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
-  .phase-card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--gold);
-  }
-  .phase-card .phase-num {
-    font-family: var(--font-display);
-    font-style: italic;
-    color: var(--gold);
-    font-size: 0.95rem;
-    margin-bottom: 0.4rem;
-    display: block;
-  }
-  .phase-card .phase-name {
-    font-family: var(--font-display);
-    font-size: 1.7rem;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-  .phase-card .phase-sub {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.92rem;
-    color: var(--gold);
-    margin-bottom: 0.8rem;
-    line-height: 1.35;
-  }
-  .phase-card .phase-body {
-    font-size: 0.85rem;
-    color: var(--text-mid);
-    line-height: 1.5;
-  }
-  @media (max-width: 900px) {
-    .phases-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 540px) {
-    .phases-grid { grid-template-columns: 1fr; }
-  }
-
-  /* ===== TLT 6-WEEK CYCLE ===== */
-  .tlt-cycle {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 2rem;
-    margin-top: 2rem;
-  }
-  .tlt-weeks {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .tlt-week {
-    text-align: center;
-    padding: 0.7rem 0.4rem;
-    border-radius: 2px;
-    position: relative;
-  }
-  .tlt-week.tight { background: var(--gold-bg); border: 1px solid var(--gold-dim); }
-  .tlt-week.loose { background: rgba(62, 94, 120, 0.15); border: 1px solid var(--blue-dim); }
-  .tlt-week .wk {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-  }
-  .tlt-week .mode {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    margin-top: 0.2rem;
-    text-transform: uppercase;
-  }
-  .tlt-week.tight .mode { color: var(--gold); }
-  .tlt-week.loose .mode { color: var(--blue); }
-  .tlt-week .desc {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 0.85rem;
-    color: var(--text);
-    margin-top: 0.4rem;
-    line-height: 1.3;
-  }
-
-  .tlt-modes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  .tlt-mode-card {
-    padding: 1.2rem;
-    background: var(--bg);
-    border-left: 2px solid var(--gold);
-  }
-  .tlt-mode-card.middle { border-left-color: var(--blue); }
-  .tlt-mode-card .head {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-  }
-  .tlt-mode-card.middle .head { color: var(--blue); }
-  .tlt-mode-card .name {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-  .tlt-mode-card .body {
-    font-size: 0.85rem;
-    color: var(--text-mid);
-    line-height: 1.5;
-  }
-  @media (max-width: 720px) {
-    .tlt-weeks { grid-template-columns: repeat(2, 1fr); }
-    .tlt-modes { grid-template-columns: 1fr; }
-  }
-
-  /* ===== ECOSYSTEM (REPOS) ===== */
-  .ecosystem {
-    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
-  }
-  .repos-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 2.5rem;
-  }
-  .repo-card {
-    background: var(--surface-hi);
-    border: 1px solid var(--border);
-    padding: 1.8rem;
-    transition: all 0.18s;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-  .repo-card:hover {
-    border-color: var(--gold-dim);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-  }
-  .repo-card.featured {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, var(--surface-hi) 0%, var(--gold-bg) 100%);
-    border-color: var(--gold-dim);
-  }
-  .repo-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-    gap: 1rem;
-  }
-  .repo-name {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    color: var(--text);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-  .repo-name .org { color: var(--gold); }
-  .repo-name .slash { color: var(--text-dim); margin: 0 0.05em; }
-  .repo-status {
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.5rem;
-    border-radius: 2px;
-    white-space: nowrap;
-  }
-  .repo-status.alpha { color: var(--gold); border: 1px solid var(--gold-dim); }
-  .repo-status.beta { color: var(--blue); border: 1px solid var(--blue-dim); }
-  .repo-status.stable { color: var(--green); border: 1px solid #4d6342; }
-  .repo-status.planned { color: var(--text-dim); border: 1px solid var(--border-hi); }
-
-  .repo-tagline {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 1.2rem;
-    color: var(--text);
-    margin-bottom: 0.6rem;
-    line-height: 1.3;
-  }
-  .repo-card.featured .repo-tagline { font-size: 1.55rem; }
-
-  .repo-desc {
-    font-size: 0.88rem;
-    color: var(--text-mid);
-    line-height: 1.55;
-    margin-bottom: 1rem;
-  }
-  .repo-contents {
-    list-style: none;
-    margin-top: auto;
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--border);
-  }
-  .repo-card.featured .repo-contents { border-top-color: var(--gold-dim); }
-  .repo-contents li {
-    font-family: var(--font-mono);
-    font-size: 0.74rem;
-    color: var(--text-mid);
-    padding: 0.25rem 0;
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-  }
-  .repo-contents li::before {
-    content: "→";
-    color: var(--gold);
-    font-family: var(--font-display);
-    font-size: 0.85rem;
-  }
-  .repo-link {
-    margin-top: 1rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  @media (max-width: 820px) {
-    .repos-grid { grid-template-columns: 1fr; }
-    .repo-card.featured { grid-column: auto; }
-  }
-
-  /* Visual diagram of how repos connect */
-  .repos-map {
-    margin-top: 3rem;
-    padding: 2rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    overflow-x: auto;
-  }
-  .repos-map svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-
-  /* ===== QUICKSTART ===== */
-  .quickstart-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 1.6rem 1.8rem;
-    margin-top: 2rem;
-    overflow-x: auto;
-  }
-  .quickstart-block pre {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.7;
-    color: var(--text);
-  }
-  .qs-comment { color: var(--text-dim); }
-  .qs-cmd { color: var(--gold); }
-  .qs-arg { color: var(--blue); }
-
-  /* ===== WHY NOW ===== */
-  .why-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
-    margin-top: 2.5rem;
-  }
-  .why-card {
-    padding: 1.6rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    transition: all 0.18s;
-  }
-  .why-card:hover { border-color: var(--gold-dim); }
-  .why-card .stamp {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 0.7rem;
-  }
-  .why-card .head {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    line-height: 1.2;
-  }
-  .why-card .body {
-    font-size: 0.88rem;
-    color: var(--text-mid);
-    line-height: 1.5;
-  }
-
-  /* ===== CTA ===== */
-  .cta-section {
-    background: linear-gradient(135deg, var(--bg) 0%, var(--gold-bg) 100%);
-    border-top: 1px solid var(--gold-dim);
-    border-bottom: 1px solid var(--gold-dim);
-    text-align: center;
-  }
-  .cta-section .cta-title {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3.6rem);
-    line-height: 1.1;
-    color: var(--text);
-    font-weight: 500;
-    max-width: 22ch;
-    margin: 0 auto 1.4rem;
-  }
-  .cta-section .cta-title em { font-style: italic; color: var(--gold); }
-  .cta-section .cta-sub {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-    color: var(--text-mid);
-    max-width: 60ch;
-    margin: 0 auto 2rem;
-  }
-  .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
-  /* ===== FOOTER ===== */
-  footer {
-    padding: 3rem var(--gutter) 2rem;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
-  }
-  footer .row {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 2rem;
-  }
-  footer h4 {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 1rem;
-    font-weight: 600;
-  }
-  footer .brand-block .word {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-  footer .brand-block .blurb {
-    font-family: var(--font-display);
-    font-style: italic;
-    color: var(--text-mid);
-    font-size: 0.95rem;
-    line-height: 1.4;
-    max-width: 32ch;
-  }
-  footer ul { list-style: none; }
-  footer ul li {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    padding: 0.25rem 0;
-  }
-  footer ul li a { color: var(--text-mid); }
-  footer ul li a:hover { color: var(--gold); }
-  footer .legal {
-    max-width: var(--max-width);
-    margin: 2.5rem auto 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-  }
-  @media (max-width: 720px) {
-    footer .row { grid-template-columns: 1fr; }
-    footer .legal { flex-direction: column; gap: 1rem; text-align: center; }
-  }
-
-  /* ===== FADE-IN ON SCROLL (opt-in via JS) ===== */
-  .fade-prep {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-prep.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .fade-prep { opacity: 1; transform: none; transition: none; }
-  }
+@media(max-width:768px){
+  nav{padding:0 1rem}.nav-links{display:none}
+  .wrap{padding:4rem 1.25rem}.hero{padding:100px 1.25rem 3rem}
+  .hero h1{font-size:2.5rem}
+  .roles-grid,.phases-row,.repos-grid,.artifact-layout,.artifact-rules,.tlt-phases,.reasons-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .tlt-timeline{grid-template-columns:repeat(3,1fr)}
+  .arch-diagram{grid-template-columns:1fr}.arch-arrow{display:none}
+  .step-row{grid-template-columns:40px 1fr}.step-links{display:none}
+  .connect-strip{flex-direction:column;gap:.5rem}
+}
 </style>
 </head>
 <body>
 
-<!-- ============== TOP NAV ============== -->
-<nav class="topbar">
-  <div class="row">
-    <div class="brand">
-      <span>SPESIFIK</span>
-      <span class="ver">v0.1 alpha</span>
-    </div>
-    <div class="links">
-      <a href="#metode">Metode</a>
-      <a href="#tlt">TLT</a>
-      <a href="#repos">Repoer</a>
-      <a href="#kom-i-gang">Kom i gang</a>
-      <a href="https://github.com/spesifik" class="cta">GitHub →</a>
-    </div>
-  </div>
+<nav>
+  <a href="#" class="nav-brand">spesifik<span class="nav-badge">v0.1 alpha</span></a>
+  <ul class="nav-links">
+    <li><a href="#elefanten">Kom i gang</a></li>
+    <li><a href="#metode">Metode</a></li>
+    <li><a href="#roller">Roller</a></li>
+    <li><a href="#html-spec">HTML-spec</a></li>
+    <li><a href="#tlt">TLT</a></li>
+    <li><a href="#repos">Repoer</a></li>
+    <li><a href="https://github.com/spesifik" target="_blank" class="nav-cta">GitHub &rarr;</a></li>
+  </ul>
 </nav>
 
-<main>
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Spec-driven utvikling &middot; &aring;pen kildekode &middot; EUPL-1.2</p>
+  <h1>spesifik<br><em>Spec-driven utvikling</em><br>for norsk offentlig sektor.</h1>
+  <p class="hero-sub">Ett rammeverk. Fire faser. Toveis ADO-sync. spesifik binder spec, kode, tester og Azure DevOps i &eacute;n lukket sl&oslash;yfe &mdash; slik at KI-utvikling kan skalere uten &aring; miste kontroll, sporbarhet eller regelverkstilpasning.</p>
+  <div class="hero-actions">
+    <a href="#elefanten" class="btn-primary">Hvor begynner vi? &rarr;</a>
+    <a href="#metode" class="btn-ghost">Fire faser</a>
+    <a href="https://github.com/spesifik" target="_blank" class="btn-ghost">GitHub</a>
+  </div>
+  <div class="hero-toc">
+    <a href="#elefanten" class="hero-toc-col">
+      <span class="htoc-label">Assessment</span>
+      <ul class="htoc-items">
+        <li>KI-modenhetsvurdering</li>
+        <li>Prioriter omr&aring;der</li>
+        <li>Roller og prosesser</li>
+        <li>Sikkerhet &amp; personvern</li>
+        <li>Pilot · Skalering</li>
+      </ul>
+    </a>
+    <a href="#metode" class="hero-toc-col">
+      <span class="htoc-label">Forst&aring;</span>
+      <ul class="htoc-items">
+        <li>Sokratisk intervju</li>
+        <li>Stakeholders kartlagt</li>
+        <li>Regulatorisk frame</li>
+        <li>Fagansvarlig signerer</li>
+      </ul>
+    </a>
+    <a href="#metode" class="hero-toc-col">
+      <span class="htoc-label">Spesifiser</span>
+      <ul class="htoc-items">
+        <li>Testbare scenarier</li>
+        <li>Akseptansekriterier</li>
+        <li>GDPR-frame</li>
+        <li>AI Act-klassifisering</li>
+      </ul>
+    </a>
+    <a href="#metode" class="hero-toc-col">
+      <span class="htoc-label">Bygg</span>
+      <ul class="htoc-items">
+        <li>KI-agent under hooks</li>
+        <li>Drift-detektor i CI</li>
+        <li>ADO-sync automatisk</li>
+        <li>Tester &rarr; scenarier</li>
+      </ul>
+    </a>
+    <a href="#metode" class="hero-toc-col">
+      <span class="htoc-label">Verifiser</span>
+      <ul class="htoc-items">
+        <li>Hvert scenario kj&oslash;rt</li>
+        <li>DPO/sikkerhet signerer</li>
+        <li>HTML-spec til ADO Wiki</li>
+        <li>Art. 11-dokumentasjon</li>
+      </ul>
+    </a>
+  </div>
+</div>
 
-<!-- ============== HERO ============== -->
-<section class="hero">
-  <div class="wrap">
-    <div class="hero-eyebrow">Spec-driven utvikling · åpen kildekode · EUPL-1.2</div>
-    <h1 class="hero-wordmark">spesifik<span class="dot"></span></h1>
-    <p class="hero-tagline-1">Spec-driven utvikling for norsk offentlig sektor.</p>
-    <p class="hero-tagline-2">Ett rammeverk. Fire faser. Toveis ADO-sync. Bygget på Spec Kit.</p>
-
-    <p class="hero-statement">
-      spesifik binder spec, kode, tester og Azure DevOps i én lukket sløyfe — slik at
-      AI-utvikling kan skalere uten å miste kontroll, sporbarhet eller regelverkstilpasning.
-    </p>
-
-    <div class="hero-ctas">
-      <a href="#kom-i-gang" class="btn primary">Kom i gang <span class="arr">→</span></a>
-      <a href="#repos" class="btn secondary">Se økosystemet</a>
-    </div>
-
-    <div class="phase-strip" aria-label="De fire fasene">
-      <div class="phase-node"><div class="ball"></div><div class="label">Forstå</div></div>
-      <div class="phase-line"></div>
-      <div class="phase-node"><div class="ball"></div><div class="label">Spesifiser</div></div>
-      <div class="phase-line"></div>
-      <div class="phase-node"><div class="ball"></div><div class="label">Bygg</div></div>
-      <div class="phase-line"></div>
-      <div class="phase-node"><div class="ball"></div><div class="label">Verifiser</div></div>
+<!-- PROBLEM -->
+<div class="problem-wrap">
+  <div class="problem-inner">
+    <p class="s-label">Virkeligheten i dag</p>
+    <h2 class="s-title">KI-koding gir 10&times; output.<br><em>Og 10&times; teknisk gjeld.</em></h2>
+    <div class="problem-grid">
+      <div class="problem-item"><p class="problem-num">01</p><p class="problem-text"><strong>Spec og kode glir fra hverandre.</strong> Confluence-sider ingen leser. Krav dokumentert etterp&aring;.</p></div>
+      <div class="problem-item"><p class="problem-num">02</p><p class="problem-text"><strong>ADO og spec lever i hver sin verden.</strong> PM og fagansvarlig snakker forbi hverandre.</p></div>
+      <div class="problem-item"><p class="problem-num">03</p><p class="problem-text"><strong>Brukerhistorier forsvinner inn i Markdown.</strong> Faglig perspektiv tapes i overgangen til kode.</p></div>
+      <div class="problem-item"><p class="problem-num">04</p><p class="problem-text"><strong>EU AI Act og GDPR-arbeid skjer etter koden er skrevet.</strong> Dyrt og forsinket.</p></div>
+      <div class="problem-item"><p class="problem-num">05</p><p class="problem-text"><strong>Konsulent forsvinner. Kunnskapen forsvinner.</strong> Forvaltning st&aring;r med svartepetter.</p></div>
+      <div class="problem-item"><p class="problem-num">06</p><p class="problem-text"><strong>Designer, PM og utvikler jobber i separate siloer.</strong> Smertepunktene oppst&aring;r i overgangene.</p></div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ============== PROBLEM / LØSNING ============== -->
-<section id="hvorfor">
-  <div class="wrap">
-    <span class="section-eyebrow">Hvorfor spesifik</span>
-    <h2 class="section-title">AI-koding gir 10× output. <em>Og 10× teknisk gjeld.</em></h2>
-    <p class="section-lead">
-      Spec'er glir fra koden. Confluence-sider ingen leser. Compliance-arbeid på etterskudd.
-      Konsulenter forsvinner med kunnskapen. Vi har bygget rammeverket som lukker sløyfen.
-    </p>
+<div class="connect-strip">
+  <span class="connect-label">L&oslash;sningen starter her</span>
+  <div class="connect-links">
+    <a href="#elefanten" class="cl">Steg 1 &ndash; Assessment <span class="a">&darr;</span></a>
+    <a href="#metode" class="cl">Fire faser <span class="a">&darr;</span></a>
+    <a href="#roller" class="cl">Tre roller <span class="a">&darr;</span></a>
+    <a href="#html-spec" class="cl">HTML-spec <span class="a">&darr;</span></a>
+  </div>
+</div>
 
-    <div class="ps-grid">
-      <div class="ps-col problem">
-        <div class="ps-col-header">I dag</div>
-        <div class="ps-col-title">Det som er brutt</div>
-        <div class="ps-row"><div class="num">01</div><div class="text">AI-koding gir 10× output — og 10× teknisk gjeld.</div></div>
-        <div class="ps-row"><div class="num">02</div><div class="text">Spec og kode glir fra hverandre. Confluence-side ingen leser.</div></div>
-        <div class="ps-row"><div class="num">03</div><div class="text">ADO og spec lever i hver sin verden. PM og fagansvarlig snakker forbi.</div></div>
-        <div class="ps-row"><div class="num">04</div><div class="text">EU AI Act og GDPR-arbeid skjer etter koden er skrevet. Dyrt og forsinket.</div></div>
-        <div class="ps-row"><div class="num">05</div><div class="text">Konsulent forsvinner. Kunnskapen forsvinner. Forvaltning står med svartepetter.</div></div>
+<!-- ELEFANTEN -->
+<div class="wrap" id="elefanten">
+  <p class="s-label">F&oslash;r du begynner &middot; Steg 0&ndash;6</p>
+  <h2 class="s-title">Spis KI-elefanten<br><em>i biter.</em></h2>
+  <p class="s-lead">KI f&oslash;les stort, uoversiktlig og risikofylt. Spec-driven krever at organisasjonen har prosesser, roller og datakvalitet p&aring; plass. Her er rekkef&oslash;lgen &mdash; basert p&aring; erfaringer fra Bufdir og norske kommuner.</p>
+
+  <div class="elephant-steps">
+    <div class="step-row">
+      <div class="step-num-col">01</div>
+      <div class="step-content">
+        <p class="step-title">KI-modenhetsvurdering &mdash; kartlegg virksomheten</p>
+        <p class="step-desc">Hvor er dere? Hvilke prosesser er dokumentert? Hvilke data finnes og er tilgjengelige? En &aelig;rlig vurdering av n&aring;situasjonen er grunnlaget for alt videre. Uten dette ender man med spec-driven utvikling p&aring; kaotisk grunnlag.</p>
       </div>
-      <div class="ps-col solution">
-        <div class="ps-col-header">Med spesifik</div>
-        <div class="ps-col-title">Det vi fikser</div>
-        <div class="ps-row"><div class="num">01</div><div class="text">SPEK.md som forhåndsgodkjent kontrakt. Reviewer slipper å gjette intensjon.</div></div>
-        <div class="ps-row"><div class="num">02</div><div class="text">Drift-detektor i CI fanger glipp samme dag. Spec'en er levende dokumentasjon.</div></div>
-        <div class="ps-row"><div class="num">03</div><div class="text">Toveis sync via MCP. ADO og SPEK.md holder seg synkronisert begge veier.</div></div>
-        <div class="ps-row"><div class="num">04</div><div class="text">Klassifisering i frontmatter. Art. 11-dokumentasjon genereres automatisk.</div></div>
-        <div class="ps-row"><div class="num">05</div><div class="text">SPEK.md eies av oppdragsgiver per kontrakt. Kunnskap blir igjen.</div></div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#metode" class="sl">&rarr; Fase 1: Forst&aring;</a>
+        <a href="#html-spec" class="sl">&rarr; HTML Assessment-rapport</a>
+        <a href="#repos" class="sl">&rarr; skills-no</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============== ARCHITECTURE ============== -->
-<section id="metode" class="arch">
-  <div class="wrap">
-    <span class="section-eyebrow">Arkitektur</span>
-    <h2 class="section-title">Intensjon møter <em>operasjon</em>.</h2>
-    <p class="section-lead">
-      Spec'en er kontrakten oppover — leselig for fagansvarlig, jus, sikkerhet. ADO er sannheten
-      nedover — utvikleren jobber som før. spesifik holder dem synkronisert.
-    </p>
-
-    <div class="arch-diagram">
-      <div class="arch-card intent">
-        <div class="tag">Intensjon</div>
-        <div class="name">SPEK.md</div>
-        <div class="desc">Fagansvarlig · DPO · sikkerhet signerer her.</div>
-        <div class="files">forstaaelse.md · SPEK.md · verifisering.md</div>
+    <div class="step-row">
+      <div class="step-num-col">02</div>
+      <div class="step-content">
+        <p class="step-title">Prioriter omr&aring;der &mdash; behov, data og risiko</p>
+        <p class="step-desc">Finn &eacute;n konkret kandidat: h&oslash;y forretningsverdi, tilgjengelige data, akseptabel regulatorisk risiko. Bruk en enkel prioriteringsmatrise. Dere g&aring;r ut med &eacute;n pilotkandidat og en prioriteringsliste.</p>
       </div>
-      <div class="arch-conn">
-        <svg width="120" height="60" viewBox="0 0 120 60" fill="none">
-          <line x1="0" y1="20" x2="100" y2="20" stroke="#8A6E3A" stroke-width="1.5"/>
-          <polygon points="100,16 110,20 100,24" fill="#8A6E3A"/>
-          <line x1="120" y1="40" x2="20" y2="40" stroke="#3E5E78" stroke-width="1.5"/>
-          <polygon points="20,36 10,40 20,44" fill="#3E5E78"/>
-        </svg>
-        <div class="label">Toveis sync</div>
-        <div class="sublabel">via MCP</div>
-      </div>
-      <div class="arch-card ops">
-        <div class="tag">Operasjon</div>
-        <div class="name">Azure DevOps</div>
-        <div class="desc">Utvikler og PM jobber som før.</div>
-        <div class="files">Epic · Feature · Story · Task</div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#metode" class="sl">&rarr; Fase 1: Forst&aring;</a>
+        <a href="#repos" class="sl">&rarr; spesifik-templates</a>
+        <a href="#tlt" class="sl">&rarr; TLT Uke 1 (Tett)</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============== FOUR PHASES ============== -->
-<section>
-  <div class="wrap">
-    <span class="section-eyebrow">Metodikk</span>
-    <h2 class="section-title">Fire faser. <em>Én lukket sløyfe.</em></h2>
-    <p class="section-lead">Hver fase med definerte gates og menneskelig godkjenning der det kreves. Ingen sølv-kuler, ingen magi.</p>
-
-    <div class="phases-grid">
-      <div class="phase-card">
-        <span class="phase-num">01</span>
-        <div class="phase-name">Forstå</div>
-        <div class="phase-sub">Frame problemet, ikke løsningen.</div>
-        <div class="phase-body">Sokratisk intervju. Stakeholders kartlagt. Regulatorisk frame avklart. Fagansvarlig signerer før neste fase.</div>
+    <div class="step-row">
+      <div class="step-num-col">03</div>
+      <div class="step-content">
+        <p class="step-title">Sett opp roller som kan beskrive prosesser</p>
+        <p class="step-desc">Hvem kan skrive og eie specs &mdash; ikke bare utviklere? Hvem kan validere fra faglig side? Etabler rollene f&oslash;r dere starter. Uten dem blir SPEK.md et utviklerdokument ingen andre eier.</p>
       </div>
-      <div class="phase-card">
-        <span class="phase-num">02</span>
-        <div class="phase-name">Spesifiser</div>
-        <div class="phase-sub">Skriv testbar SPEK.md.</div>
-        <div class="phase-body">Scenarier, akseptansekriterier, GDPR-frame, AI Act-klassifisering. Strukturert review før Bygg starter.</div>
-      </div>
-      <div class="phase-card">
-        <span class="phase-num">03</span>
-        <div class="phase-name">Bygg</div>
-        <div class="phase-sub">Implementer under hooks.</div>
-        <div class="phase-body">AI-agent med begrensninger. Drift fanges av CI. ADO synkroniseres automatisk. Tester refererer scenarier.</div>
-      </div>
-      <div class="phase-card">
-        <span class="phase-num">04</span>
-        <div class="phase-name">Verifiser</div>
-        <div class="phase-sub">Bevis spec mot kode.</div>
-        <div class="phase-body">Hvert scenario kjørt. DPO/sikkerhet signerer hvis regulert. Spec'en blir levende dokumentasjon for forvaltningen.</div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#roller" class="sl">&rarr; Designer, PM, Utvikler</a>
+        <a href="#html-spec" class="sl">&rarr; Bro-modellen</a>
+        <a href="#tlt" class="sl">&rarr; TLT Uke 1</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ============== TLT — TIGHT LOOSE TIGHT ============== -->
-<section id="tlt">
-  <div class="wrap">
-    <span class="section-eyebrow">Arbeidsmåte</span>
-    <h2 class="section-title"><em>TLT</em> · Tight · Loose · Tight</h2>
-    <p class="section-lead">Tett · Fritt · Tett. Spec Kit lever inne i sprint-syklusen. Sprint gir NÅR, spec gir HVORDAN.</p>
-
-    <div class="tlt-cycle">
-      <div class="tlt-weeks">
-        <div class="tlt-week tight">
-          <div class="wk">Uke 1</div>
-          <div class="mode">Tett</div>
-          <div class="desc">Planlegging</div>
-        </div>
-        <div class="tlt-week loose">
-          <div class="wk">Uke 2</div>
-          <div class="mode">Fritt</div>
-          <div class="desc">Gjennomføring</div>
-        </div>
-        <div class="tlt-week loose">
-          <div class="wk">Uke 3</div>
-          <div class="mode">Halvtid</div>
-          <div class="desc">/analyze</div>
-        </div>
-        <div class="tlt-week loose">
-          <div class="wk">Uke 4</div>
-          <div class="mode">Fritt</div>
-          <div class="desc">Gjennomføring</div>
-        </div>
-        <div class="tlt-week tight">
-          <div class="wk">Uke 5</div>
-          <div class="mode">Tett</div>
-          <div class="desc">Ferdigstilling</div>
-        </div>
-        <div class="tlt-week tight">
-          <div class="wk">Uke 6</div>
-          <div class="mode">Demo</div>
-          <div class="desc">Bevis + retro</div>
-        </div>
+    <div class="step-row">
+      <div class="step-num-col">04</div>
+      <div class="step-content">
+        <p class="step-title">Sikkerhet og personvern &mdash; avklar rammene</p>
+        <p class="step-desc">GDPR, NSM-klassifisering og EU AI Act-krav avklares <em>f&oslash;r</em> piloten starter. Hvilke data kan brukes? Hvem er DPO? spesifik har validatorer innebygd, men de hjelper ikke om rammene er uklare.</p>
       </div>
-
-      <div class="tlt-modes">
-        <div class="tlt-mode-card">
-          <div class="head">Tett · Uke 1</div>
-          <div class="name">Spec-planlegging</div>
-          <div class="body">/specify + /clarify + /plan + /tasks for sprintens epics. Constitution oppdateres. Spec er godkjent før én linje kode produseres.</div>
-        </div>
-        <div class="tlt-mode-card middle">
-          <div class="head">Fritt · Uke 2–4</div>
-          <div class="name">Autonom gjennomføring</div>
-          <div class="body">/implement task for task — fri gjennomføring, alltid sporbar til spec. Halvtid i uke 3 (/analyze) fanger drift. Spec-avvik er blokkere i standup.</div>
-        </div>
-        <div class="tlt-mode-card">
-          <div class="head">Tett · Uke 5–6</div>
-          <div class="name">Demo og retro</div>
-          <div class="body">Demo Day: hvert akseptansekriterium er et demo-punkt. Retro oppdaterer constitution til neste syklus. Discovery starter /specify for neste epic.</div>
-        </div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#metode" class="sl">&rarr; Fase 2: Spesifiser</a>
+        <a href="#repos" class="sl">&rarr; skills-no / nsm-classifier</a>
+        <a href="#hvorfor-na" class="sl">&rarr; Art. 11 &middot; 2. aug 2026</a>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num-col">05</div>
+      <div class="step-content">
+        <p class="step-title">Kj&oslash;r en begrenset pilot &mdash; &eacute;n leveranse, fire faser</p>
+        <p class="step-desc">N&aring; er dere klar for spesifik. Start med &eacute;n konkret leveranse: Forst&aring; &rarr; Spesifiser &rarr; Bygg &rarr; Verifiser. Begrens scope radikalt. L&aelig;r hva som virker i deres kontekst. Retro og constitution-oppdatering er obligatorisk output.</p>
+      </div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#metode" class="sl">&rarr; Fire faser</a>
+        <a href="#tlt" class="sl">&rarr; TLT-syklus (6 uker)</a>
+        <a href="#start" class="sl">&rarr; Quickstart</a>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num-col">06</div>
+      <div class="step-content">
+        <p class="step-title">Skaler det som virker &mdash; neste sprint, neste team</p>
+        <p class="step-desc">Etter piloten vet dere hva som skalerer. Ta l&aelig;ringsloopen inn i neste sprint. Constitution, SPEK.md og ADO-strukturen eies av virksomheten &mdash; kunnskap blir igjen selv n&aring;r konsulenten slutter.</p>
+      </div>
+      <div class="step-links">
+        <p class="sl-label">Bruk i spesifik</p>
+        <a href="#repos" class="sl">&rarr; spesifik/spesifik</a>
+        <a href="#html-spec" class="sl">&rarr; HTML-spec til ADO Wiki</a>
+        <a href="#hvorfor-na" class="sl">&rarr; Kunnskap blir igjen</a>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ============== ECOSYSTEM ============== -->
-<section id="repos" class="ecosystem">
-  <div class="wrap">
-    <span class="section-eyebrow">Økosystem</span>
-    <h2 class="section-title">Seks repoer. <em>Én sammenhengende plattform.</em></h2>
-    <p class="section-lead">
-      Hver del er åpen, separat versjonert, og kan brukes alene. Sammen utgjør de hele
-      spesifik-plattformen — fra metodikk til norsk regelverkstilpasning.
-    </p>
+<div class="connect-strip">
+  <span class="connect-label">Etter assessment</span>
+  <div class="connect-links">
+    <a href="#arkitektur" class="cl">Arkitektur: SPEK.md &harr; ADO <span class="a">&darr;</span></a>
+    <a href="#roller" class="cl">Hvem eier hva? <span class="a">&darr;</span></a>
+  </div>
+</div>
 
-    <!-- Visual map -->
-    <div class="repos-map">
-      <svg viewBox="0 0 900 360" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,0 L10,5 L0,10 Z" fill="#8A6E3A"/>
-          </marker>
-        </defs>
-        <!-- center node: methodology -->
-        <rect x="350" y="140" width="200" height="80" fill="#1F252E" stroke="#D4A95C" stroke-width="2"/>
-        <text x="450" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#D4A95C" font-weight="600">spesifik/spesifik</text>
-        <text x="450" y="195" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="14" fill="#ECE7DB">Methodology · SPEK.md · skills</text>
-
-        <!-- top: mcp-spesifik -->
-        <rect x="350" y="20" width="200" height="60" fill="#171C23" stroke="#3A4452"/>
-        <text x="450" y="45" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#ECE7DB">spesifik/mcp-spesifik</text>
-        <text x="450" y="65" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12" fill="#9A9489">ADO + Jira + sync engine</text>
-        <line x1="450" y1="80" x2="450" y2="135" stroke="#8A6E3A" stroke-width="1.5" marker-end="url(#arrG)"/>
-
-        <!-- right: mcp-no -->
-        <rect x="640" y="100" width="200" height="60" fill="#171C23" stroke="#3A4452"/>
-        <text x="740" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#ECE7DB">spesifik/mcp-no</text>
-        <text x="740" y="145" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12" fill="#9A9489">Brreg · Altinn · NAV · SSB</text>
-        <line x1="638" y1="160" x2="555" y2="175" stroke="#8A6E3A" stroke-width="1.5" marker-end="url(#arrG)"/>
-
-        <!-- right-lower: skills-no -->
-        <rect x="640" y="200" width="200" height="60" fill="#171C23" stroke="#3A4452"/>
-        <text x="740" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#ECE7DB">spesifik/skills-no</text>
-        <text x="740" y="245" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12" fill="#9A9489">GDPR · NSM · Designsystemet</text>
-        <line x1="638" y1="220" x2="555" y2="195" stroke="#8A6E3A" stroke-width="1.5" marker-end="url(#arrG)"/>
-
-        <!-- left: templates -->
-        <rect x="60" y="100" width="200" height="60" fill="#171C23" stroke="#3A4452"/>
-        <text x="160" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#ECE7DB">spesifik/spesifik-templates</text>
-        <text x="160" y="145" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12" fill="#9A9489">Norske SPEK-maler</text>
-        <line x1="262" y1="160" x2="345" y2="175" stroke="#8A6E3A" stroke-width="1.5" marker-end="url(#arrG)"/>
-
-        <!-- left-lower: reference -->
-        <rect x="60" y="200" width="200" height="60" fill="#171C23" stroke="#3A4452"/>
-        <text x="160" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#ECE7DB">spesifik/spesifik-reference</text>
-        <text x="160" y="245" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12" fill="#9A9489">Levende eksempel</text>
-        <line x1="262" y1="220" x2="345" y2="195" stroke="#8A6E3A" stroke-width="1.5" marker-end="url(#arrG)"/>
-
-        <!-- bottom: ado/jira & claude code (downstream consumers) -->
-        <rect x="200" y="300" width="200" height="40" fill="none" stroke="#3E5E78" stroke-dasharray="3,3"/>
-        <text x="300" y="325" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6B97B5">Azure DevOps / Jira</text>
-
-        <rect x="500" y="300" width="200" height="40" fill="none" stroke="#3E5E78" stroke-dasharray="3,3"/>
-        <text x="600" y="325" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6B97B5">Claude Code · MCP runtime</text>
-
-        <line x1="400" y1="225" x2="320" y2="298" stroke="#3E5E78" stroke-width="1" stroke-dasharray="2,2"/>
-        <line x1="500" y1="225" x2="580" y2="298" stroke="#3E5E78" stroke-width="1" stroke-dasharray="2,2"/>
-      </svg>
+<!-- ARCHITECTURE -->
+<div class="wrap" id="arkitektur">
+  <p class="s-label">Arkitektur</p>
+  <h2 class="s-title">Intensjon m&oslash;ter<br><em>operasjon.</em></h2>
+  <p class="s-lead">Spec&rsquo;en er kontrakten oppover &mdash; leselig for fagansvarlig, jus, sikkerhet. ADO er sannheten nedover &mdash; utvikleren jobber som f&oslash;r. spesifik holder dem synkronisert via MCP.</p>
+  <div class="arch-diagram">
+    <div class="arch-box gold-border">
+      <div class="arch-box-label">Intensjon &middot; <a href="#metode">Fase 2&ndash;4 &nearr;</a></div>
+      <h3>SPEK.md</h3>
+      <p>Fagansvarlig &middot; DPO &middot; sikkerhet signerer her.</p>
+      <ul class="arch-items">
+        <li>forstaaelse.md</li><li>SPEK.md</li><li>verifisering.md</li>
+        <li>GDPR-frame &middot; NSM-klassifisering</li><li>Art. 11-frontmatter</li>
+      </ul>
     </div>
-
-    <!-- Cards grid -->
-    <div class="repos-grid">
-
-      <!-- FEATURED: spesifik/spesifik -->
-      <div class="repo-card featured">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>spesifik</div>
-          <div class="repo-status alpha">alpha · v0.1</div>
-        </div>
-        <div class="repo-tagline">Metodikken. Hjertet av plattformen.</div>
-        <div class="repo-desc">
-          Det offisielle metodikkdokumentet, SPEK.md-skjemaet, slash-kommandoene, hooks, conformance-suite,
-          constitution-malen og engelske default-skills. Repoet du klona først.
-        </div>
-        <ul class="repo-contents">
-          <li>METHODOLOGY.md · CONSTITUTION.md · SPEK-SCHEMA.md</li>
-          <li>.claude/commands/ — /forstaa, /spesifiser, /bygg, /verifiser, /sync-ado</li>
-          <li>.claude/skills/ — spec-author, spec-reviewer, drift-detector</li>
-          <li>conformance/ — Bronze · Sølv · Gull-tester</li>
-        </ul>
-        <a href="https://github.com/spesifik/spesifik" class="repo-link">github.com/spesifik/spesifik <span>→</span></a>
-      </div>
-
-      <!-- mcp-spesifik -->
-      <div class="repo-card">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>mcp-spesifik</div>
-          <div class="repo-status alpha">alpha</div>
-        </div>
-        <div class="repo-tagline">Sync-motoren. ADO ↔ SPEK.</div>
-        <div class="repo-desc">
-          Tre MCP-servere: <code>mcp-spesifik-core</code> (sync-engine + drift-score),
-          <code>mcp-ado-spesifik</code> (Azure DevOps med custom fields), og <code>mcp-jira-spesifik</code>.
-        </div>
-        <ul class="repo-contents">
-          <li>validate-spek, sync-bidir, drift-score</li>
-          <li>create-feature-from-spek, pull-state-to-spek</li>
-          <li>conflict resolution + reconciliation</li>
-          <li>Webhook + polling fallback</li>
-        </ul>
-        <a href="https://github.com/spesifik/mcp-spesifik" class="repo-link">github.com/spesifik/mcp-spesifik <span>→</span></a>
-      </div>
-
-      <!-- mcp-no -->
-      <div class="repo-card">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>mcp-no</div>
-          <div class="repo-status beta">beta</div>
-        </div>
-        <div class="repo-tagline">Norske offentlige API-er, MCP-pakket.</div>
-        <div class="repo-desc">
-          Monorepo med MCP-servere for Brønnøysundregistrene, Statistisk sentralbyrå, Doffin,
-          NAV, Kartverket og Altinn. Brukes av alle spesifik-prosjekter — men også selvstendig.
-        </div>
-        <ul class="repo-contents">
-          <li>@mcp-no/brreg — organisasjons- og rolleoppslag</li>
-          <li>@mcp-no/altinn — meldinger og skjema</li>
-          <li>@mcp-no/nav, @mcp-no/ssb, @mcp-no/kartverket</li>
-          <li>@mcp-no/doffin — anskaffelsesregisteret</li>
-        </ul>
-        <a href="https://github.com/spesifik/mcp-no" class="repo-link">github.com/spesifik/mcp-no <span>→</span></a>
-      </div>
-
-      <!-- spesifik-templates -->
-      <div class="repo-card">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>spesifik-templates</div>
-          <div class="repo-status alpha">alpha</div>
-        </div>
-        <div class="repo-tagline">SPEK-maler for offentlig sektor.</div>
-        <div class="repo-desc">
-          Norske templates for vanlige offentlig-sektor-mønstre: tilskuddssøknader,
-          Altinn-skjema, Brreg-oppslag, intern fagsystem, citizen feedback.
-          GDPR-vasket. NSM-merket. AI Act-klassifisert.
-        </div>
-        <ul class="repo-contents">
-          <li>no/tilskuddssoknad/ — hele Altinn-flyt</li>
-          <li>no/altinn-skjema/ — innsending + signering</li>
-          <li>no/brreg-oppslag/ — orgnr-validering</li>
-          <li>no/intern-fagsystem/, no/citizen-feedback/</li>
-        </ul>
-        <a href="https://github.com/spesifik/spesifik-templates" class="repo-link">github.com/spesifik/spesifik-templates <span>→</span></a>
-      </div>
-
-      <!-- skills-no -->
-      <div class="repo-card">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>skills-no</div>
-          <div class="repo-status alpha">alpha</div>
-        </div>
-        <div class="repo-tagline">Norske Claude Code-skills.</div>
-        <div class="repo-desc">
-          Skills som vet hva Datatilsynet, NSM, Digdir og Altinn er. GDPR-validator,
-          NSM-klassifiserer, AI Act-klassifiserer, Designsystemet-helper.
-        </div>
-        <ul class="repo-contents">
-          <li>gdpr-validator — fnr-, kontonr-, navnedeteksjon</li>
-          <li>nsm-classifier — ÅPEN/BEGRENSET/KONFIDENSIELT</li>
-          <li>aiact-classifier — Annex III mapping</li>
-          <li>digdir-designsystem, brreg-lookup</li>
-        </ul>
-        <a href="https://github.com/spesifik/skills-no" class="repo-link">github.com/spesifik/skills-no <span>→</span></a>
-      </div>
-
-      <!-- spesifik-reference -->
-      <div class="repo-card">
-        <div class="repo-head">
-          <div class="repo-name"><span class="org">spesifik</span><span class="slash">/</span>spesifik-reference</div>
-          <div class="repo-status planned">planlagt v0.5</div>
-        </div>
-        <div class="repo-tagline">Levende referanseimplementasjon.</div>
-        <div class="repo-desc">
-          Tilskuddsportalen Mini — et lite, hypotetisk kommunalt tilskuddssystem
-          bygget end-to-end med spesifik. Demonstrerer alle fire faser, ADO-sync,
-          GDPR/AI Act-flyt, og bruk av mcp-no.
-        </div>
-        <ul class="repo-contents">
-          <li>apps/web (React + Designsystemet)</li>
-          <li>apps/api (TypeScript + Altinn-integrasjon)</li>
-          <li>docs/specs/ — 6–10 fullstendige SPEK.md</li>
-          <li>Public ADO project · README walkthrough</li>
-        </ul>
-        <a href="https://github.com/spesifik/spesifik-reference" class="repo-link">github.com/spesifik/spesifik-reference <span>→</span></a>
-      </div>
-
+    <div class="arch-arrow">
+      <div class="arch-arrow-line"></div>
+      <div class="arch-arrow-label">Toveis<br>sync<br>via MCP</div>
+      <div class="arch-arrow-line"></div>
+    </div>
+    <div class="arch-box">
+      <div class="arch-box-label">Operasjon &middot; <a href="#repos">mcp-spesifik &nearr;</a></div>
+      <h3>Azure DevOps</h3>
+      <p>Utvikler og PM jobber som f&oslash;r.</p>
+      <ul class="arch-items"><li>Epic</li><li>Feature</li><li>Story</li><li>Task</li></ul>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ============== QUICKSTART ============== -->
-<section id="kom-i-gang">
-  <div class="wrap">
-    <span class="section-eyebrow">Kom i gang</span>
-    <h2 class="section-title">På fem minutter. <em>Greenfield eller brownfield.</em></h2>
-    <p class="section-lead">
-      Trenger ikke endre prosessene dine i dag. Begynn med én leveranse.
-      Kjør gjennom alle fire faser. Ta lærdommen til neste sprint.
-    </p>
+<div class="connect-strip">
+  <span class="connect-label">Hvem jobber hvor i arkitekturen</span>
+  <div class="connect-links">
+    <a href="#roller" class="cl">Designer &rarr; Figma + SPEK.md <span class="a">&darr;</span></a>
+    <a href="#roller" class="cl">PM &rarr; ADO + Epic <span class="a">&darr;</span></a>
+    <a href="#roller" class="cl">Utvikler &rarr; SPEK.md + Tasks <span class="a">&darr;</span></a>
+  </div>
+</div>
 
-    <div class="quickstart-block">
-      <pre><span class="qs-comment"># 1. Initialiser et nytt spesifik-prosjekt</span>
-<span class="qs-cmd">npx</span> -y <span class="qs-arg">@spesifik/cli</span> init mitt-prosjekt
-<span class="qs-cmd">cd</span> mitt-prosjekt && <span class="qs-cmd">claude</span>
-
-<span class="qs-comment"># 2. Start første fase (Forstå)</span>
-/forstaa <span class="qs-arg">"Tilskuddsordning for kulturforeninger"</span>
-
-<span class="qs-comment"># 3. Når Forstå er godkjent — generer spec</span>
-/spesifiser
-
-<span class="qs-comment"># 4. Review og godkjenn</span>
-/review-spek
-
-<span class="qs-comment"># 5. Bygg — synk til ADO automatisk</span>
-/bygg
-
-<span class="qs-comment"># 6. Verifiser når koden er ferdig</span>
-/verifiser
-
-<span class="qs-comment"># Brownfield? Generer SPEK fra eksisterende kodebase:</span>
-/onboard-brownfield</pre>
+<!-- ROLES -->
+<div class="wrap" id="roller">
+  <p class="s-label">Nye roller &middot; Tre broer</p>
+  <h2 class="s-title">Smertepunktene oppst&aring;r ikke<br><em>i rollene &mdash; men i overgangene.</em></h2>
+  <p class="s-lead">Spec-driven endrer ikke hva folk gj&oslash;r &mdash; men det endrer hva de leverer til hverandre. Hver rolle er ansvarlig for to broer. Se ogs&aring; <a href="#html-spec">HTML-spec-artefakten</a> og <a href="#tlt">TLT-syklusen</a>.</p>
+  <div class="roles-grid">
+    <div class="role-card">
+      <span class="role-dot purple"></span>
+      <h3>Designer</h3>
+      <p class="role-subtitle">Brukerbehov &rarr; eksekverbar flow</p>
+      <div class="role-before"><p class="role-label">Tidligere</p>
+        <ul class="role-list"><li>Leverer mockups</li><li>Utvikler tolker fritt</li><li>Mockup glemmes</li><li>A11y-beslutninger usynlige</li></ul>
+      </div>
+      <div class="role-after"><p class="role-label">Med spesifik</p>
+        <ul class="role-list"><li>Annotert Figma-flow med nodeId</li><li>WCAG-beslutninger i spec</li><li>Designtokens binder Figma til kode</li><li>Forblir i Figma &mdash; aldri i git</li></ul>
+      </div>
+      <div class="role-bridge"><strong>Bro-ansvar:</strong> Figma &rarr; SPEK.md &middot; Figma &rarr; ADO Story</div>
+      <a href="#html-spec" class="role-goto">&rarr; Figma i HTML-spec</a>
+      <a href="#metode" class="role-goto">&rarr; Fase 1: Forst&aring;</a>
+    </div>
+    <div class="role-card">
+      <span class="role-dot amber"></span>
+      <h3>Prosjektleder</h3>
+      <p class="role-subtitle">Epic &rarr; sporbar leveranse</p>
+      <div class="role-before"><p class="role-label">Tidligere</p>
+        <ul class="role-list"><li>Epic brytes ned uten faglig perspektiv</li><li>ADO-items ugjenkjennelige</li><li>Sporbarhet bakover brutt</li><li>PM kan ikke rapportere fra ADO</li></ul>
+      </div>
+      <div class="role-after"><p class="role-label">Med spesifik</p>
+        <ul class="role-list"><li>ADO og SPEK.md eksisterer parallelt</li><li>Eksplisitt lenke mellom epic og spec</li><li>Tre spr&aring;k, ett produkt</li><li>Sporbarhet bevart via ADO-sync</li></ul>
+      </div>
+      <div class="role-bridge"><strong>Bro-ansvar:</strong> ADO Epic &rarr; SPEK.md &middot; ADO &rarr; Designer</div>
+      <a href="#arkitektur" class="role-goto">&rarr; ADO &harr; SPEK.md</a>
+      <a href="#tlt" class="role-goto">&rarr; TLT Uke 1: Spec-planlegging</a>
+    </div>
+    <div class="role-card">
+      <span class="role-dot coral"></span>
+      <h3>Utvikler</h3>
+      <p class="role-subtitle">Spec som samhandlingskontrakt</p>
+      <div class="role-before"><p class="role-label">Tidligere</p>
+        <ul class="role-list"><li>Tolker krav selv</li><li>Spec ingen leser</li><li>KI-agent med uklar kontekst</li><li>Drift uoppdaget</li></ul>
+      </div>
+      <div class="role-after"><p class="role-label">Med spesifik</p>
+        <ul class="role-list"><li>SPEK.md er forhåndsgodkjent kontrakt</li><li>KI-agent innen spec-rammen</li><li>Drift-detektor i CI</li><li>Leverer spec-fil + samhandlingskontrakt</li></ul>
+      </div>
+      <div class="role-bridge"><strong>Bro-ansvar:</strong> SPEK.md &rarr; ADO Tasks &middot; SPEK.md &rarr; andre team</div>
+      <a href="#start" class="role-goto">&rarr; Quickstart: /bygg</a>
+      <a href="#repos" class="role-goto">&rarr; mcp-spesifik + skills-no</a>
     </div>
   </div>
-</section>
+  <table class="compare-table">
+    <thead><tr><th>Overgang</th><th>Gammelt tap</th><th>Med spesifik</th></tr></thead>
+    <tbody>
+      <tr><td>Designer &rarr; PM</td><td class="td-b">Brukerhistorier forsvinner inn i Markdown</td><td class="td-a">Annotert flow + nodeId-referanser i SPEK.md</td></tr>
+      <tr><td>PM &rarr; Utvikler</td><td class="td-b">Faglig perspektiv tapes i nedbrytning</td><td class="td-a">ADO og spec parallelt med eksplisitt lenke</td></tr>
+      <tr><td>Utvikler &rarr; Systemer</td><td class="td-b">Kontrakt mellom team er uformell og glemmes</td><td class="td-a">SPEK.md er samhandlingskontrakten alle signerer</td></tr>
+    </tbody>
+  </table>
+</div>
 
-<!-- ============== WHY NOW ============== -->
-<section>
-  <div class="wrap">
-    <span class="section-eyebrow">Hvorfor nå</span>
-    <h2 class="section-title">Tre frister. <em>Én løsning.</em></h2>
-    <p class="section-lead">
-      EU AI Act, GDPR-modning og AI-output-volum konvergerer. spesifik gjør dokumentasjon
-      til biprodukt — ikke etterarbeid.
-    </p>
+<div class="connect-strip">
+  <span class="connect-label">Slik jobber alle tre rollene med samme artefakt</span>
+  <div class="connect-links">
+    <a href="#html-spec" class="cl">HTML-spec: &eacute;n felles kilde <span class="a">&darr;</span></a>
+    <a href="#html-spec" class="cl">Gap-visualisering <span class="a">&darr;</span></a>
+  </div>
+</div>
 
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="stamp">02. august 2026</div>
-        <div class="head">EU AI Act trer i kraft</div>
-        <div class="body">Annex III-systemer trenger Art. 11-dokumentasjon. spesifik genererer den fra SPEK frontmatter og Verifiser-fasen.</div>
+<!-- HTML SPEC -->
+<div class="wrap" id="html-spec">
+  <p class="s-label">HTML som spec-container</p>
+  <h2 class="s-title">Designer, PM og utvikler.<br><em>&Eacute;n levende spec-artefakt.</em></h2>
+  <p class="s-lead">HTML er det eneste formatet som kan inneholde Figma-referanser, Markdown-spec, designtokens, Storybook-stories og ADO-oppgaver i ett gap-bevisst dokument &mdash; som alle <a href="#roller">roller</a> kan lese uten ny installasjon.</p>
+  <div class="artifact-layout">
+    <div class="artifact-visual">
+      <div class="artifact-header">
+        <span class="ad r"></span><span class="ad y"></span><span class="ad g"></span>
+        <span style="margin-left:8px">feature/tilskudd-soeknadsflyt &middot; spec.html</span>
       </div>
-      <div class="why-card">
-        <div class="stamp">Doffin · Anskaffelser</div>
-        <div class="head">Krav om åpen kildekode</div>
-        <div class="body">EUPL-1.2-lisens og spec-eierskap til oppdragsgiver per kontrakt. Ingen leverandørlås — bytt verktøy når dere vil.</div>
+      <div class="artifact-body">
+        <div class="artifact-row"><span class="artifact-icon">FIGMA</span><span class="artifact-row-content">S&oslash;knadsflyt v3 &middot; node #42A <span class="ok-badge">&#10003; pinned</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">SPEC</span><span class="artifact-row-content">5 akseptansekriterier &middot; 3 scenarier <span class="ok-badge">&#10003; komplett</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">TOKENS</span><span class="artifact-row-content">Designsystemet.no v2.1 <span class="ok-badge">&#10003; synkronisert</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">STORIES</span><span class="artifact-row-content">SoeknadsskjemaForm <span class="gap-badge">&#9888; ingen spec-lenke</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">ADO</span><span class="artifact-row-content">Feature #1204 &middot; 3 stories &middot; 0 tasks <span class="gap-badge">&#9888; mangler tasks</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">A11Y</span><span class="artifact-row-content">WCAG 2.1 AA <span class="gap-badge">&#9888; ikke dokumentert</span></span></div>
+        <div class="artifact-row"><span class="artifact-icon">ART. 11</span><span class="artifact-row-content">Risikoklasse: Begrenset <span class="ok-badge">&#10003; klassifisert</span></span></div>
       </div>
-      <div class="why-card">
-        <div class="stamp">Konsulent → Forvaltning</div>
-        <div class="head">Kunnskap blir igjen</div>
-        <div class="body">SPEK.md er levende dokumentasjon, ikke en Confluence-side ingen leser. Forvaltningen overtar samme objekt utviklingen brukte.</div>
-      </div>
-      <div class="why-card">
-        <div class="stamp">Multi-team</div>
-        <div class="head">Eksplisitte kontrakter</div>
-        <div class="body">Spec-hierarki speiler ADO. Avhengigheter mellom team blir eksplisitte. Drift fanges av CI før det blir en integrasjonsbug i prod.</div>
-      </div>
-      <div class="why-card">
-        <div class="stamp">GDPR · NSM</div>
-        <div class="head">Compliance som default</div>
-        <div class="body">Linter blokkerer fnr og kontonr i spec'er. NSM-klassifisering er obligatorisk. DPIA-referanse i frontmatter — eller ingen merge.</div>
-      </div>
-      <div class="why-card">
-        <div class="stamp">AI-output</div>
-        <div class="head">10× output uten 10× gjeld</div>
-        <div class="body">SDD-disiplin gjør AI-koding bærekraftig. Drift-score holder spec og kode synkronisert. Review-flaskehalsen løses strukturelt.</div>
+    </div>
+    <div class="artifact-text">
+      <h3>Gap-visualisering er den <em>manglende primitiven.</em></h3>
+      <p>Notion, Confluence og Backstage samler dokumentasjon &mdash; men ingen viser hva som <em>ikke</em> er koblet. Et Figma-frame uten spec-seksjon. Et akseptansekriterium uten testdekning.</p>
+      <p>HTML-spec-artefakten gj&oslash;r gap synlig som CI-signaler &mdash; handlingsbare avvik eiet av en rolle, ikke en prosent-score.</p>
+      <div class="artifact-flow">
+        <div class="flow-step"><span class="flow-num">1</span><span><span class="rb designer">Designer</span> annoterer Figma-flow med nodeId &rarr; vises i spec-HTML</span></div>
+        <div class="flow-step"><span class="flow-num">2</span><span><span class="rb pm">PM</span> skriver brukerhistorie i ADO &rarr; synkes automatisk til SPEK.md</span></div>
+        <div class="flow-step"><span class="flow-num">3</span><span><span class="rb dev">Utvikler</span> kj&oslash;rer <code style="font-family:var(--mono);font-size:11px;color:var(--gold)">spesifik render</code> &rarr; HTML-artefakt med gap-rapport</span></div>
+        <div class="flow-step"><span class="flow-num">4</span><span><span class="rb dev">Utvikler</span> publisher til ADO Wiki &rarr; alle roller leser uten git-tilgang</span></div>
+        <div class="flow-step"><span class="flow-num">5</span><span>Gap lukkes sprint for sprint &rarr; Art. 11-dokumentasjon bygges automatisk</span></div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- ============== CTA ============== -->
-<section class="cta-section">
-  <div class="wrap">
-    <h2 class="cta-title">Vil dere se dette på <em>en konkret leveranse?</em></h2>
-    <p class="cta-sub">
-      90 minutters uforpliktende SPEK-skisseøkt. Vi tegner spec-hierarkiet og ADO-koblingen
-      sammen. Dere ser selv om det gir mening.
-    </p>
-    <div class="cta-actions">
-      <a href="mailto:mikael.ortenheim@experis.no" class="btn primary">Bestill skisseøkt <span class="arr">→</span></a>
-      <a href="https://github.com/spesifik" class="btn secondary">Utforsk på GitHub</a>
+  <div class="artifact-rules">
+    <div>
+      <p class="ar-label">Regel 1</p>
+      <p class="ar-text">HTML g&aring;r aldri inn i git. Kildene er i git. HTML er et build-artefakt fra <a href="#metode">Verifiser-fasen</a>.</p>
+    </div>
+    <div>
+      <p class="ar-label">Regel 2</p>
+      <p class="ar-text"><a href="#roller">Designere</a> forblir i Figma. Artefakten refererer til Figma via nodeId &mdash; erstatter aldri designverk&oslash;yet.</p>
+    </div>
+    <div>
+      <p class="ar-label">Regel 3</p>
+      <p class="ar-text">Gap er handlingsbare &mdash; ikke en prosent-score. Hvert gap har en eier. Se <a href="#metode">Bygg-fasen</a>.</p>
     </div>
   </div>
-</section>
+</div>
 
-</main>
+<div class="connect-strip">
+  <span class="connect-label">Slik produseres spec-artefakten i hver fase</span>
+  <div class="connect-links">
+    <a href="#metode" class="cl">Fase 1: Forst&aring; <span class="a">&darr;</span></a>
+    <a href="#metode" class="cl">Fase 2: Spesifiser <span class="a">&darr;</span></a>
+    <a href="#metode" class="cl">Fase 3: Bygg <span class="a">&darr;</span></a>
+    <a href="#metode" class="cl">Fase 4: Verifiser &rarr; HTML-spec <span class="a">&darr;</span></a>
+  </div>
+</div>
 
-<!-- ============== FOOTER ============== -->
+<!-- METHODOLOGY -->
+<div class="wrap" id="metode">
+  <p class="s-label">Metodikk &middot; Fire faser</p>
+  <h2 class="s-title">Fire faser.<br><em>&Eacute;n lukket sl&oslash;yfe.</em></h2>
+  <p class="s-lead">Hver fase med definerte gates og menneskelig godkjenning der det kreves. Fasene kj&oslash;res i <a href="#tlt">TLT-syklusen</a> &mdash; Fase 1&ndash;2 i Tett-uke, 3&ndash;4 i Fritt og Tett.</p>
+  <div class="phases-row">
+    <a href="#start" class="phase-card">
+      <div class="phase-num">01</div>
+      <h3>Forst&aring;</h3><p class="phase-tagline">Frame problemet, ikke l&oslash;sningen.</p>
+      <ul class="phase-points"><li>Sokratisk intervju</li><li>Stakeholders kartlagt</li><li>Regulatorisk frame avklart</li><li>Fagansvarlig signerer</li></ul>
+      <div class="phase-who"><span class="wb designer">Designer</span><span class="wb pm">PM</span><span class="wb dev">Utvikler</span></div>
+    </a>
+    <a href="#start" class="phase-card">
+      <div class="phase-num">02</div>
+      <h3>Spesifiser</h3><p class="phase-tagline">Skriv testbar SPEK.md.</p>
+      <ul class="phase-points"><li>Scenarier og akseptansekriterier</li><li>GDPR-frame dokumentert</li><li>AI Act-klassifisering</li><li>Strukturert review</li></ul>
+      <div class="phase-who"><span class="wb designer">Designer</span><span class="wb pm">PM</span><span class="wb dev">Utvikler</span></div>
+    </a>
+    <a href="#start" class="phase-card">
+      <div class="phase-num">03</div>
+      <h3>Bygg</h3><p class="phase-tagline">Implementer under hooks.</p>
+      <ul class="phase-points"><li>KI-agent med begrensninger</li><li>Drift fanges av CI</li><li>ADO synkroniseres automatisk</li><li>Tester refererer scenarier</li></ul>
+      <div class="phase-who"><span class="wb dev">Utvikler</span><span class="wb pm">PM</span></div>
+    </a>
+    <a href="#html-spec" class="phase-card">
+      <div class="phase-num">04</div>
+      <h3>Verifiser</h3><p class="phase-tagline">Bevis spec mot kode.</p>
+      <ul class="phase-points"><li>Hvert scenario kj&oslash;rt</li><li>DPO/sikkerhet signerer</li><li>HTML-spec publisert til ADO Wiki</li><li>Levende dokumentasjon</li></ul>
+      <div class="phase-who"><span class="wb designer">Designer</span><span class="wb pm">PM</span><span class="wb dev">Utvikler</span></div>
+    </a>
+  </div>
+</div>
+
+<div class="connect-strip">
+  <span class="connect-label">Fasene lever inni TLT-syklusen</span>
+  <div class="connect-links">
+    <a href="#tlt" class="cl">TLT: Tight&ndash;Loose&ndash;Tight <span class="a">&darr;</span></a>
+    <a href="#tlt" class="cl">6-ukers sprintsyklus <span class="a">&darr;</span></a>
+  </div>
+</div>
+
+<!-- TLT -->
+<div class="wrap" id="tlt">
+  <p class="s-label">Arbeidsmåte &middot; Sprint &times; Spec</p>
+  <h2 class="s-title"><em>TLT</em> &middot; Tight &middot; Loose &middot; Tight</h2>
+  <p class="s-lead">Tett &middot; Fritt &middot; Tett. <a href="#metode">De fire fasene</a> lever inne i sprint-syklusen. Sprint gir N&Aring;R, spec gir HVORDAN. <a href="#roller">Alle tre roller</a> er til stede i Tett-ukene.</p>
+  <div class="tlt-timeline">
+    <div class="tlt-week tight"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">1</p><p class="tlt-week-name">Tett</p></div>
+    <div class="tlt-week"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">2</p><p class="tlt-week-name">Fritt</p></div>
+    <div class="tlt-week"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">3</p><p class="tlt-week-name">Halvtid</p></div>
+    <div class="tlt-week"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">4</p><p class="tlt-week-name">Fritt</p></div>
+    <div class="tlt-week tight"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">5</p><p class="tlt-week-name">Tett</p></div>
+    <div class="tlt-week tight"><p class="tlt-week-label">Uke</p><p class="tlt-week-num">6</p><p class="tlt-week-name">Demo</p></div>
+  </div>
+  <div class="tlt-phases">
+    <div class="tlt-pd tight-bg">
+      <p class="tlt-pd-label">Tett &middot; Uke 1</p><h4>Spec-planlegging</h4>
+      <p>/specify + /clarify + /plan + /tasks. Constitution oppdateres. Spec godkjennes av alle tre roller f&oslash;r &eacute;n linje kode.</p>
+      <a href="#metode" class="px">&rarr; Fase 1: Forst&aring;</a>
+      <a href="#metode" class="px">&rarr; Fase 2: Spesifiser</a>
+      <a href="#roller" class="px">&rarr; Tre roller</a>
+    </div>
+    <div class="tlt-pd">
+      <p class="tlt-pd-label">Fritt &middot; Uke 2&ndash;4</p><h4>Autonom gjennomf&oslash;ring</h4>
+      <p>/implement task for task &mdash; alltid sporbar til spec. Halvtid i uke 3 (/analyze) fanger drift. HTML-spec oppdateres og gap-rapport publiseres.</p>
+      <a href="#metode" class="px">&rarr; Fase 3: Bygg</a>
+      <a href="#html-spec" class="px">&rarr; Gap-visualisering</a>
+      <a href="#repos" class="px">&rarr; mcp-spesifik</a>
+    </div>
+    <div class="tlt-pd tight-bg">
+      <p class="tlt-pd-label">Tett &middot; Uke 5&ndash;6</p><h4>Demo og retro</h4>
+      <p>Demo Day: hvert akseptansekriterium er et demo-punkt. HTML-spec er leveransen til forvaltning og compliance.</p>
+      <a href="#metode" class="px">&rarr; Fase 4: Verifiser</a>
+      <a href="#html-spec" class="px">&rarr; HTML-spec til ADO Wiki</a>
+      <a href="#hvorfor-na" class="px">&rarr; Art. 11 dokumentasjon</a>
+    </div>
+  </div>
+</div>
+
+<div class="connect-strip">
+  <span class="connect-label">Verkt&oslash;yene som driver syklusen</span>
+  <div class="connect-links">
+    <a href="#repos" class="cl">spesifik/spesifik <span class="a">&darr;</span></a>
+    <a href="#repos" class="cl">mcp-spesifik <span class="a">&darr;</span></a>
+    <a href="#repos" class="cl">mcp-no <span class="a">&darr;</span></a>
+    <a href="#repos" class="cl">skills-no <span class="a">&darr;</span></a>
+  </div>
+</div>
+
+<!-- REPOS -->
+<div class="wrap" id="repos">
+  <p class="s-label">&Oslash;kosystem &middot; Seks repoer</p>
+  <h2 class="s-title">Seks repoer.<br><em>&Eacute;n sammenhengende plattform.</em></h2>
+  <p class="s-lead">Hver del er &aring;pen, separat versjonert, og kan brukes alene. Tagget med hvilke <a href="#metode">faser</a> og <a href="#roller">roller</a> som bruker hvert repo.</p>
+  <div class="repos-grid">
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik</p><p class="repo-title">Metodikken. Hjertet.</p></div><span class="repo-badge">alpha &middot; v0.1</span></div>
+      <p class="repo-desc">Metodikkdokumentet, SPEK.md-skjemaet, slash-kommandoene, hooks og constitution-malen.</p>
+      <ul class="repo-files"><li>METHODOLOGY.md &middot; CONSTITUTION.md</li><li>.claude/commands/ &mdash; /forstaa /spesifiser /bygg</li><li>.claude/skills/ &mdash; spec-author, drift-detector</li><li>conformance/ &mdash; Bronze &middot; S&oslash;lv &middot; Gull</li></ul>
+      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">TLT</span></div>
+      <a href="https://github.com/spesifik/spesifik" target="_blank" class="repo-link">github.com/spesifik/spesifik &rarr;</a>
+    </div>
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/mcp-spesifik</p><p class="repo-title">Sync-motoren. ADO &harr; SPEK.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Tre MCP-servere: sync-engine, Azure DevOps med custom fields, og Jira-kobling.</p>
+      <ul class="repo-files"><li>validate-spek &middot; sync-bidir &middot; drift-score</li><li>create-feature-from-spek</li><li>conflict resolution + reconciliation</li><li>Webhook + polling fallback</li></ul>
+      <div class="repo-phases"><span class="rpt">Fase 3: Bygg</span><span class="rpt">PM</span><span class="rpt">Utvikler</span></div>
+      <a href="https://github.com/spesifik/mcp-spesifik" target="_blank" class="repo-link">github.com/spesifik/mcp-spesifik &rarr;</a>
+    </div>
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/mcp-no</p><p class="repo-title">Norske offentlige API-er.</p></div><span class="repo-badge">beta</span></div>
+      <p class="repo-desc">MCP-servere for Brreg, SSB, Doffin, NAV, Kartverket og Altinn.</p>
+      <ul class="repo-files"><li>@mcp-no/brreg &mdash; org- og rolleoppslag</li><li>@mcp-no/altinn &mdash; meldinger og skjema</li><li>@mcp-no/nav &middot; @mcp-no/ssb &middot; @mcp-no/kartverket</li><li>@mcp-no/doffin &mdash; anskaffelsesregisteret</li></ul>
+      <div class="repo-phases"><span class="rpt">Fase 3: Bygg</span><span class="rpt">Utvikler</span></div>
+      <a href="https://github.com/spesifik/mcp-no" target="_blank" class="repo-link">github.com/spesifik/mcp-no &rarr;</a>
+    </div>
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-templates</p><p class="repo-title">SPEK-maler for offentlig sektor.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Norske templates for tilskudds&shy;s&oslash;knader, Altinn-skjema, intern fagsystem og citizen feedback.</p>
+      <ul class="repo-files"><li>no/tilskuddssoknad/ &mdash; hele Altinn-flyt</li><li>no/altinn-skjema/ &mdash; innsending + signering</li><li>no/brreg-oppslag/ &mdash; orgnr-validering</li><li>GDPR-vasket &middot; NSM-merket &middot; AI Act-klass.</li></ul>
+      <div class="repo-phases"><span class="rpt">Fase 2: Spesifiser</span><span class="rpt">PM</span></div>
+      <a href="https://github.com/spesifik/spesifik-templates" target="_blank" class="repo-link">github.com/spesifik/spesifik-templates &rarr;</a>
+    </div>
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/skills-no</p><p class="repo-title">Norske Claude Code-skills.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Skills som vet hva Datatilsynet, NSM, Digdir og Altinn er. Brukes i alle fire faser.</p>
+      <ul class="repo-files"><li>gdpr-validator &mdash; fnr-, kontonr-deteksjon</li><li>nsm-classifier &mdash; &Aring;PEN/BEGRENSET/KONF</li><li>aiact-classifier &mdash; Annex III mapping</li><li>digdir-designsystem &middot; brreg-lookup</li></ul>
+      <div class="repo-phases"><span class="rpt">Assessment</span><span class="rpt">Fase 2</span><span class="rpt">Fase 4</span></div>
+      <a href="https://github.com/spesifik/skills-no" target="_blank" class="repo-link">github.com/spesifik/skills-no &rarr;</a>
+    </div>
+    <div class="repo-card">
+      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-reference</p><p class="repo-title">Levende referanseimpl.</p></div><span class="repo-badge">planlagt v0.5</span></div>
+      <p class="repo-desc">Tilskuddsportalen Mini &mdash; et kommunalt tilskuddssystem bygget end-to-end med spesifik.</p>
+      <ul class="repo-files"><li>apps/web (React + Designsystemet)</li><li>apps/api (TypeScript + Altinn)</li><li>docs/specs/ &mdash; 6&ndash;10 fullstendige SPEK.md</li><li>Public ADO project &middot; README walkthrough</li></ul>
+      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">Alle roller</span></div>
+      <a href="https://github.com/spesifik/spesifik-reference" target="_blank" class="repo-link">github.com/spesifik/spesifik-reference &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div class="connect-strip">
+  <span class="connect-label">Klar til &aring; starte?</span>
+  <div class="connect-links">
+    <a href="#start" class="cl">Quickstart p&aring; 5 min <span class="a">&darr;</span></a>
+    <a href="#elefanten" class="cl">&larr; Tilbake: Assessment-stegene</a>
+  </div>
+</div>
+
+<!-- QUICKSTART -->
+<div class="wrap" id="start">
+  <p class="s-label">Kom i gang</p>
+  <h2 class="s-title">P&aring; fem minutter.<br><em>Greenfield eller brownfield.</em></h2>
+  <p class="s-lead">Trenger ikke endre prosessene dine i dag. Begynn med &eacute;n leveranse og kj&oslash;r gjennom alle <a href="#metode">fire faser</a>. Ta l&aelig;rdommen til neste sprint i <a href="#tlt">TLT-syklusen</a>.</p>
+  <div class="code-block">
+    <div class="code-header">bash &mdash; Claude Code + spesifik<span>quickstart</span></div>
+    <div class="code-body">
+      <span class="cc"># 1. Initialiser</span><br>
+      <span class="cmd">npx</span> -y @spesifik/cli init mitt-prosjekt<br>
+      <span class="cmd">cd</span> mitt-prosjekt &amp;&amp; claude<br><br>
+      <span class="cc"># 2. Fase 1: Forst&aring;</span><span class="cphase">Fase 1 &middot; TLT Uke 1</span><br>
+      <span class="cmd">/forstaa</span> <span class="cs">"Tilskuddsordning for kulturforeninger"</span><br><br>
+      <span class="cc"># 3. Fase 2: Spesifiser</span><span class="cphase">Fase 2 &middot; Designer + PM signerer</span><br>
+      <span class="cmd">/spesifiser</span><br>
+      <span class="cmd">/review-spek</span><br>
+      <div class="code-sep">
+      <span class="cc"># 4. Fase 3: Bygg</span><span class="cphase">Fase 3 &middot; TLT Uke 2&ndash;4</span><br>
+      <span class="cmd">/bygg</span><br><br>
+      <span class="cc"># 5. Fase 4: Verifiser + HTML-spec</span><span class="cphase">Fase 4 &middot; TLT Uke 5&ndash;6</span><br>
+      <span class="cmd">/verifiser</span><br>
+      <span class="cmd">spesifik render</span> <span class="cc"># &rarr; HTML-spec til ADO Wiki</span>
+      </div>
+      <div class="code-sep">
+      <span class="cc"># Brownfield? Generer SPEK fra eksisterende kodebase:</span><br>
+      <span class="cmd">/onboard-brownfield</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="connect-strip">
+  <span class="connect-label">Hvorfor dette haster</span>
+  <div class="connect-links">
+    <a href="#hvorfor-na" class="cl">EU AI Act: 2. august 2026 <span class="a">&darr;</span></a>
+    <a href="#hvorfor-na" class="cl">GDPR &middot; NSM &middot; Doffin <span class="a">&darr;</span></a>
+  </div>
+</div>
+
+<!-- WHY NOW -->
+<div class="wrap" id="hvorfor-na">
+  <p class="s-label">Hvorfor n&aring;</p>
+  <h2 class="s-title">Tre frister.<br><em>&Eacute;n l&oslash;sning.</em></h2>
+  <p class="s-lead">EU AI Act, GDPR-modning og KI-output-volum konvergerer. spesifik gj&oslash;r dokumentasjon til biprodukt &mdash; ikke etterarbeid. Se <a href="#html-spec">HTML-spec</a> og <a href="#elefanten">assessment-stegene</a>.</p>
+  <div class="reasons-grid">
+    <div class="reason-card"><p class="reason-date">02. august 2026</p><h3>EU AI Act trer i kraft</h3><p>Annex III-systemer trenger Art. 11-dokumentasjon. <a href="#html-spec">HTML-spec-artefakten</a> er det &ldquo;single set of technical documentation&rdquo; loven krever. Genereres i <a href="#metode">Verifiser-fasen</a>.</p></div>
+    <div class="reason-card"><p class="reason-date">Doffin &middot; Anskaffelser</p><h3>Krav om &aring;pen kildekode</h3><p>EUPL-1.2-lisens og spec-eierskap til oppdragsgiver per kontrakt. Ingen leverandorl&aring;s. Se <a href="#repos">repoer</a>.</p></div>
+    <div class="reason-card"><p class="reason-date">Konsulent &rarr; Forvaltning</p><h3>Kunnskap blir igjen</h3><p>SPEK.md er levende dokumentasjon. Forvaltningen overtar samme objekt utviklingen brukte &mdash; med full historikk i git og ADO.</p></div>
+    <div class="reason-card"><p class="reason-date">Multi-team</p><h3>Eksplisitte kontrakter</h3><p>Spec-hierarki speiler ADO. Avhengigheter mellom team er eksplisitte. Drift fanges av CI &mdash; se <a href="#metode">Bygg-fasen</a> og <a href="#repos">mcp-spesifik</a>.</p></div>
+    <div class="reason-card"><p class="reason-date">GDPR &middot; NSM</p><h3>Compliance som default</h3><p>Linter blokkerer fnr og kontonr i spec&rsquo;er. NSM-klassifisering obligatorisk. Se <a href="#repos">skills-no</a> og <a href="#elefanten">Steg 4: Sikkerhet</a>.</p></div>
+    <div class="reason-card"><p class="reason-date">KI-output</p><h3>10&times; output uten 10&times; gjeld</h3><p>SDD-disiplin gj&oslash;r KI-koding b&aelig;rekraftig. Drift-score holder spec og kode synkronisert gjennom hele <a href="#tlt">TLT-syklusen</a>.</p></div>
+  </div>
+</div>
+
+<div class="cta-section">
+  <h2>Vil dere se dette p&aring;<br><em>en konkret leveranse?</em></h2>
+  <p>90 minutters uforpliktende SPEK-skisseøkt. Vi tegner spec-hierarkiet, roller og ADO-koblingen sammen.</p>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+    <a href="mailto:mikael.ortenheim@experis.no" class="btn-primary">Bestill skisseøkt &rarr;</a>
+    <a href="#elefanten" class="btn-ghost">&larr; Assessment-stegene</a>
+    <a href="https://github.com/spesifik" target="_blank" class="btn-ghost">Utforsk p&aring; GitHub</a>
+  </div>
+</div>
+
 <footer>
-  <div class="row">
-    <div class="brand-block">
-      <div class="word">spesifik<span style="color: var(--gold)">.</span></div>
-      <div class="blurb">Spec-driven utvikling for norsk offentlig sektor. Åpen kildekode under EUPL-1.2.</div>
-    </div>
-    <div>
-      <h4>Repoer</h4>
-      <ul>
-        <li><a href="https://github.com/spesifik/spesifik">spesifik</a></li>
-        <li><a href="https://github.com/spesifik/mcp-spesifik">mcp-spesifik</a></li>
-        <li><a href="https://github.com/spesifik/mcp-no">mcp-no</a></li>
-        <li><a href="https://github.com/spesifik/spesifik-templates">templates</a></li>
-        <li><a href="https://github.com/spesifik/skills-no">skills-no</a></li>
-        <li><a href="https://github.com/spesifik/spesifik-reference">reference</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Lær</h4>
-      <ul>
-        <li><a href="#metode">Metodikk</a></li>
-        <li><a href="#tlt">TLT-syklus</a></li>
-        <li><a href="#kom-i-gang">Quickstart</a></li>
-        <li><a href="https://github.com/spesifik/spesifik/blob/main/METHODOLOGY.md">Hele metodikken</a></li>
-      </ul>
-    </div>
-    <div>
-      <h4>Bygd av</h4>
-      <ul>
-        <li><a href="https://www.experis.no">Experis Norge</a></li>
-        <li>AI Center of Excellence</li>
-        <li><a href="mailto:mikael.ortenheim@experis.no">Mikael Örtenheim</a></li>
-      </ul>
-    </div>
+  <div class="footer-grid">
+    <div><p class="footer-brand">spesifik</p><p class="footer-tagline">Spec-driven utvikling for norsk offentlig sektor.<br>&Aring;pen kildekode under EUPL-1.2.</p></div>
+    <div class="footer-col"><h4>Repoer</h4><ul>
+      <li><a href="https://github.com/spesifik/spesifik" target="_blank">spesifik</a></li>
+      <li><a href="https://github.com/spesifik/mcp-spesifik" target="_blank">mcp-spesifik</a></li>
+      <li><a href="https://github.com/spesifik/mcp-no" target="_blank">mcp-no</a></li>
+      <li><a href="https://github.com/spesifik/spesifik-templates" target="_blank">templates</a></li>
+      <li><a href="https://github.com/spesifik/skills-no" target="_blank">skills-no</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>L&aelig;r</h4><ul>
+      <li><a href="#elefanten">Hvor begynner man?</a></li>
+      <li><a href="#arkitektur">Arkitektur</a></li>
+      <li><a href="#roller">Rolleendringer</a></li>
+      <li><a href="#html-spec">HTML-spec</a></li>
+      <li><a href="#metode">Fire faser</a></li>
+      <li><a href="#tlt">TLT-syklus</a></li>
+      <li><a href="#start">Quickstart</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Bygd av</h4><ul>
+      <li><a href="https://www.experis.no" target="_blank">Experis Norge</a></li>
+      <li><a href="mailto:mikael.ortenheim@experis.no">AI Center of Excellence</a></li>
+      <li><a href="mailto:mikael.ortenheim@experis.no">Mikael &Ouml;rtenheim</a></li>
+    </ul></div>
   </div>
-  <div class="legal">
-    <span>EUPL-1.2 · Åpen kildekode · 2026</span>
-    <span>spesifik v0.1 alpha</span>
-  </div>
+  <div class="footer-bottom"><span>EUPL-1.2 &middot; &Aring;pen kildekode &middot; 2026</span><span>spesifik v0.1 alpha</span></div>
 </footer>
 
 <script>
-  // Progressive enhancement: only apply fade-in if IntersectionObserver is supported
-  if ('IntersectionObserver' in window) {
-    const fadeElements = document.querySelectorAll('section .wrap > *');
-    fadeElements.forEach(el => el.classList.add('fade-prep'));
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // small staggered delay for a more pleasant reveal
-          const delay = Math.min(entry.target.dataset.staggerIndex || 0, 4) * 60;
-          setTimeout(() => entry.target.classList.add('visible'), delay);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
-    fadeElements.forEach(el => observer.observe(el));
-
-    // Trigger any element already in viewport immediately (no-flash on load)
-    requestAnimationFrame(() => {
-      fadeElements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          el.classList.add('visible');
-        }
-      });
-    });
-  }
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const id=a.getAttribute('href').slice(1);
+    if(!id)return;
+    const el=document.getElementById(id);
+    if(el){e.preventDefault();const top=el.getBoundingClientRect().top+window.scrollY-64;window.scrollTo({top,behavior:'smooth'})}
+  });
+});
 </script>
-
 </body>
 </html>
