@@ -281,6 +281,7 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
   <ul class="nav-links">
     <li><a href="#elefanten">Kom i gang</a></li>
     <li><a href="#metode">Metode</a></li>
+    <li><a href="#qa">QA</a></li>
     <li><a href="#roller">Roller</a></li>
     <li><a href="#html-spec">HTML-spec</a></li>
     <li><a href="#tlt">TLT</a></li>
@@ -307,7 +308,7 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
         <li>Prioriter omr&aring;der</li>
         <li>Roller og prosesser</li>
         <li>Sikkerhet &amp; personvern</li>
-        <li>Pilot · Skalering</li>
+        <li>Pilot &middot; Skalering</li>
       </ul>
     </a>
     <a href="#metode" class="hero-toc-col">
@@ -322,28 +323,37 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
     <a href="#metode" class="hero-toc-col">
       <span class="htoc-label">Spesifiser</span>
       <ul class="htoc-items">
-        <li>Testbare scenarier</li>
-        <li>Akseptansekriterier</li>
-        <li>GDPR-frame</li>
-        <li>AI Act-klassifisering</li>
+        <li>SC-01, SC-02 &hellip; scenario-IDer</li>
+        <li>EARS-akseptansekriterier</li>
+        <li>GDPR-frame &middot; AI Act</li>
+        <li>Alle tre roller godkjenner</li>
       </ul>
     </a>
     <a href="#metode" class="hero-toc-col">
       <span class="htoc-label">Bygg</span>
       <ul class="htoc-items">
         <li>KI-agent under hooks</li>
-        <li>Drift-detektor i CI</li>
-        <li>ADO-sync automatisk</li>
-        <li>Tester &rarr; scenarier</li>
+        <li>Test-skjelett fra SC-ID</li>
+        <li>Drift-score i CI</li>
+        <li>GDPR/NSM per commit</li>
+      </ul>
+    </a>
+    <a href="#qa" class="hero-toc-col">
+      <span class="htoc-label">QA</span>
+      <ul class="htoc-items">
+        <li>Lag 1: automatisert CI</li>
+        <li>Lag 2: UAT + sign-off</li>
+        <li>Gate mellom lagene</li>
+        <li>Art. 11-bevis</li>
       </ul>
     </a>
     <a href="#metode" class="hero-toc-col">
       <span class="htoc-label">Verifiser</span>
       <ul class="htoc-items">
-        <li>Hvert scenario kj&oslash;rt</li>
+        <li>UAT-sjekkliste fra SC-IDer</li>
+        <li>Fagansvarlig krysser av</li>
         <li>DPO/sikkerhet signerer</li>
-        <li>HTML-spec til ADO Wiki</li>
-        <li>Art. 11-dokumentasjon</li>
+        <li>HTML-spec + Art. 11</li>
       </ul>
     </a>
   </div>
@@ -651,21 +661,165 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
     <a href="#start" class="phase-card">
       <div class="phase-num">02</div>
       <h3>Spesifiser</h3><p class="phase-tagline">Skriv testbar SPEK.md.</p>
-      <ul class="phase-points"><li>Scenarier og akseptansekriterier</li><li>GDPR-frame dokumentert</li><li>AI Act-klassifisering</li><li>Strukturert review</li></ul>
+      <ul class="phase-points"><li>SC-01, SC-02&hellip; scenario-IDer</li><li>EARS-format akseptansekriterier</li><li>GDPR-frame &middot; AI Act-klassifisering</li><li>Alle tre roller godkjenner</li></ul>
       <div class="phase-who"><span class="wb designer">Designer</span><span class="wb pm">PM</span><span class="wb dev">Utvikler</span></div>
     </a>
-    <a href="#start" class="phase-card">
+    <a href="#qa" class="phase-card">
       <div class="phase-num">03</div>
-      <h3>Bygg</h3><p class="phase-tagline">Implementer under hooks.</p>
-      <ul class="phase-points"><li>KI-agent med begrensninger</li><li>Drift fanges av CI</li><li>ADO synkroniseres automatisk</li><li>Tester refererer scenarier</li></ul>
+      <h3>Bygg</h3><p class="phase-tagline">Implementer. L&oslash;pende QA i CI.</p>
+      <ul class="phase-points"><li>Test-skjelett generert fra SC-ID</li><li>Drift-score stopper pipeline</li><li>GDPR/NSM per commit</li><li>ADO synkroniseres automatisk</li></ul>
       <div class="phase-who"><span class="wb dev">Utvikler</span><span class="wb pm">PM</span></div>
     </a>
-    <a href="#html-spec" class="phase-card">
+    <a href="#qa" class="phase-card">
       <div class="phase-num">04</div>
-      <h3>Verifiser</h3><p class="phase-tagline">Bevis spec mot kode.</p>
-      <ul class="phase-points"><li>Hvert scenario kj&oslash;rt</li><li>DPO/sikkerhet signerer</li><li>HTML-spec publisert til ADO Wiki</li><li>Levende dokumentasjon</li></ul>
+      <h3>Verifiser</h3><p class="phase-tagline">UAT + bevis spec mot kode.</p>
+      <ul class="phase-points"><li>UAT-sjekkliste fra SC-IDer</li><li>Fagansvarlig &amp; DPO signerer</li><li>HTML-spec til ADO Wiki</li><li>Art. 11 daterte testlogger</li></ul>
       <div class="phase-who"><span class="wb designer">Designer</span><span class="wb pm">PM</span><span class="wb dev">Utvikler</span></div>
     </a>
+  </div>
+</div>
+
+<div class="connect-strip">
+  <span class="connect-label">QA er den r&oslash;de tr&aring;den gjennom alle fasene</span>
+  <div class="connect-links">
+    <a href="#qa" class="cl">To lag &middot; &eacute;n gate <span class="a">&darr;</span></a>
+    <a href="#qa" class="cl">SC-ID-standard <span class="a">&darr;</span></a>
+    <a href="#qa" class="cl">UAT-sjekkliste <span class="a">&darr;</span></a>
+    <a href="#qa" class="cl">Art. 11-bevis <span class="a">&darr;</span></a>
+  </div>
+</div>
+
+<!-- QA SECTION -->
+<div class="wrap" id="qa">
+  <p class="s-label">Kvalitetssikring &middot; To lag &middot; &Eacute;n kjede</p>
+  <h2 class="s-title">QA er ikke et steg.<br><em>Det er den r&oslash;de tr&aring;den.</em></h2>
+  <p class="s-lead">QA starter i <a href="#metode">Fase 2</a> — ikke etter koden er skrevet. Koblingen mellom scenario-ID og testresultat er det som gj&oslash;r HTML-spec til et levende bevis, ikke en rapport.</p>
+
+  <!-- PHASE ROWS -->
+  <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:0;">
+
+    <div style="display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1px solid var(--border);">
+      <div style="background:var(--bg3);padding:1.25rem 1rem;border-right:1px solid var(--border-gold);border-left:3px solid var(--purple);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Fase 2</p>
+        <p style="font-size:13px;font-weight:600;color:var(--text)">Spesifiser</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:.2rem;font-style:italic">Testbare kriterier fra dag &eacute;n</p>
+      </div>
+      <div style="padding:1.25rem 1.5rem;border-right:1px solid var(--border);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">SC-ID-standard</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:.5rem">Hvert akseptansekriterium f&aring;r en stabil ID: <code style="font-family:var(--mono);font-size:11px;color:var(--gold)">SC-01</code>, <code style="font-family:var(--mono);font-size:11px;color:var(--gold)">SC-02</code>&hellip; Tester og UAT-sjekklisten refererer direkte til disse — ikke til fritekst som kan endre seg.</p>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:.75rem 1rem;font-family:var(--mono);font-size:10px;line-height:1.9;color:var(--text-dim);">
+          <span style="color:var(--gold)">SC-01</span>  WHEN bruker sender inn s&oslash;knad med gyldig orgnr<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;THE SYSTEM SHALL lagre og returnere kvitteringsnummer<br>
+          <span style="color:var(--gold)">SC-02</span>  WHEN orgnr ikke finnes i Brreg<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;THE SYSTEM SHALL vise feilmelding med riktig lenke
+        </div>
+      </div>
+      <div style="padding:1.25rem 1.5rem;">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">EARS-format</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:.5rem">Easy Approach to Requirements Syntax — unambiguous og LLM-parsebar. KI-agenten kan generere testskjelett direkte fra SC-ID-lista i SPEK.md.</p>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <div style="font-size:11px;color:var(--text-dim);padding:4px 8px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);font-family:var(--mono)">WHEN &lt;trigger&gt; THE SYSTEM SHALL &lt;respons&gt;</div>
+          <div style="font-size:11px;color:var(--text-dim);padding:4px 8px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);font-family:var(--mono)">WHILE &lt;tilstand&gt; THE SYSTEM SHALL &lt;respons&gt;</div>
+          <div style="font-size:11px;color:var(--text-dim);padding:4px 8px;background:var(--bg3);border-radius:2px;border:1px solid var(--border);font-family:var(--mono)">THE SYSTEM SHALL &lt;ubetinget krav&gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1px solid var(--border);">
+      <div style="background:var(--bg3);padding:1.25rem 1rem;border-right:1px solid var(--border-gold);border-left:3px solid var(--coral);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--coral);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Fase 3</p>
+        <p style="font-size:13px;font-weight:600;color:var(--text)">Bygg</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:.2rem;font-style:italic">L&oslash;pende QA i CI</p>
+      </div>
+      <div style="padding:1.25rem 1.5rem;border-right:1px solid var(--border);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">Lag 1 &middot; Automatisert</p>
+        <div style="display:flex;flex-direction:column;gap:.35rem;">
+          <div style="display:flex;align-items:baseline;gap:.5rem;font-size:12px;color:var(--text-muted)"><span style="font-family:var(--mono);font-size:9px;color:var(--coral);width:110px;flex-shrink:0">Test-skjelett</span>/bygg genererer test-skall per SC-ID (TDD-by-default)</div>
+          <div style="display:flex;align-items:baseline;gap:.5rem;font-size:12px;color:var(--text-muted)"><span style="font-family:var(--mono);font-size:9px;color:var(--coral);width:110px;flex-shrink:0">Drift-score</span>Tester ↔ akseptansekriterier — brutt test stopper pipeline</div>
+          <div style="display:flex;align-items:baseline;gap:.5rem;font-size:12px;color:var(--text-muted)"><span style="font-family:var(--mono);font-size:9px;color:var(--coral);width:110px;flex-shrink:0">GDPR/NSM</span>skills-no validator kj&oslash;rer per commit, blokkerer fnr/kontonr</div>
+          <div style="display:flex;align-items:baseline;gap:.5rem;font-size:12px;color:var(--text-muted)"><span style="font-family:var(--mono);font-size:9px;color:var(--coral);width:110px;flex-shrink:0">A11y-gate</span>axe-core / pa11y / Lighthouse CI &mdash; WCAG 2.1 AA</div>
+        </div>
+      </div>
+      <div style="padding:1.25rem 1.5rem;">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">Hva CI stopper</p>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(224,92,74,.08);border:1px solid rgba(224,92,74,.2);border-radius:2px">&#10007; Brutt SC-ID test &rarr; ingen merge</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(224,92,74,.08);border:1px solid rgba(224,92,74,.2);border-radius:2px">&#10007; GDPR-leak detektert &rarr; ingen merge</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(224,92,74,.08);border:1px solid rgba(224,92,74,.2);border-radius:2px">&#10007; Drift-score &gt; terskel &rarr; ingen merge</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(224,92,74,.08);border:1px solid rgba(224,92,74,.2);border-radius:2px">&#10007; A11y under 90% &rarr; ingen merge</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GATE ROW -->
+    <div style="background:linear-gradient(90deg,transparent,var(--gold-dim2) 20%,var(--gold-dim2) 80%,transparent);border-top:1px solid var(--border-gold);border-bottom:1px solid var(--border-gold);padding:.7rem 1rem;display:flex;align-items:center;gap:1rem;">
+      <span style="font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0">&#9650; GATE</span>
+      <span style="font-size:13px;color:var(--text-muted)">Lag 1 m&aring; v&aelig;re 100&nbsp;% gr&oslash;nn f&oslash;r UAT kan starte. Ingen &aring;pne QA-avvik overleverer til fagansvarlig.</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;margin-left:auto">&#9660; UAT</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:160px 1fr 1fr;">
+      <div style="background:var(--bg3);padding:1.25rem 1rem;border-right:1px solid var(--border-gold);border-left:3px solid var(--green);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem">Fase 4</p>
+        <p style="font-size:13px;font-weight:600;color:var(--text)">Verifiser</p>
+        <p style="font-size:11px;color:var(--text-dim);margin-top:.2rem;font-style:italic">Formell QA + UAT</p>
+      </div>
+      <div style="padding:1.25rem 1.5rem;border-right:1px solid var(--border);">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">Lag 2 &middot; Manuell UAT</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:.75rem"><code style="font-family:var(--mono);font-size:11px;color:var(--gold)">/verifiser</code> genererer UAT-sjekkliste automatisk fra alle SC-IDer. Fagansvarlig krysser av scenario for scenario i <em>forretningsspr&aring;k</em> — ikke teknisk.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+          <thead><tr>
+            <th style="text-align:left;font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.08em;padding:4px 6px;border-bottom:1px solid var(--border)">Felt</th>
+            <th style="text-align:left;font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.08em;padding:4px 6px;border-bottom:1px solid var(--border)">Innhold</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold)">SC-ID</td><td style="padding:3px 6px;border-bottom:1px solid var(--border);color:var(--text-dim)">SC-01, SC-02&hellip;</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold)">Steg</td><td style="padding:3px 6px;border-bottom:1px solid var(--border);color:var(--text-dim)">5&ndash;9 steg i brukerspr&aring;k</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold)">Forventet</td><td style="padding:3px 6px;border-bottom:1px solid var(--border);color:var(--text-dim)">Det observerbare beviset</td></tr>
+            <tr><td style="padding:3px 6px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;color:var(--gold)">Status</td><td style="padding:3px 6px;border-bottom:1px solid var(--border);color:var(--text-dim)">&#10003; Godkjent / &#10007; Avvist</td></tr>
+            <tr><td style="padding:3px 6px;font-family:var(--mono);font-size:10px;color:var(--gold)">Sign-off</td><td style="padding:3px 6px;color:var(--text-dim)">Navn + dato + rolle</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:1.25rem 1.5rem;">
+        <p style="font-family:var(--mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem">HTML-spec = QA-rapport + Art. 11</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:.75rem">EU AI Act Annex IV §2(g) krever <em>daterte, signerte testlogger</em>. spesifik produserer dette automatisk: CI-resultater + UAT sign-off samles i HTML-spec med timestamp.</p>
+        <div style="display:flex;flex-direction:column;gap:.3rem;">
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(91,173,127,.08);border:1px solid rgba(91,173,127,.2);border-radius:2px">&#10003; CI-testlogger datert og versjonert</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(91,173,127,.08);border:1px solid rgba(91,173,127,.2);border-radius:2px">&#10003; DPO/sikkerhet sign-off per SC-ID</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(91,173,127,.08);border:1px solid rgba(91,173,127,.2);border-radius:2px">&#10003; Annex IV §2(g)-krav oppfylt</div>
+          <div style="font-size:12px;color:var(--text-muted);padding:5px 8px;background:rgba(91,173,127,.08);border:1px solid rgba(91,173,127,.2);border-radius:2px">&#10003; 10 &aring;rs oppbevaring i git + ADO Wiki</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARTEFAKT CHAIN -->
+  <div style="margin-top:2rem;display:flex;align-items:stretch;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+    <div style="flex:1;padding:.9rem .75rem;background:var(--bg2);border-right:1px solid var(--border);text-align:center;">
+      <p style="font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.1em;margin-bottom:.3rem">SPEK.md</p>
+      <p style="font-size:11px;color:var(--text-dim)">SC-01&hellip;SC-N<br>EARS-kriterier</p>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 .5rem;color:var(--text-dim);font-size:12px">&rarr;</div>
+    <div style="flex:1;padding:.9rem .75rem;background:var(--bg2);border-right:1px solid var(--border);text-align:center;">
+      <p style="font-family:var(--mono);font-size:9px;color:var(--coral);letter-spacing:.1em;margin-bottom:.3rem">Testskjelett</p>
+      <p style="font-size:11px;color:var(--text-dim)">Auto-generert<br>pr SC-ID</p>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 .5rem;color:var(--text-dim);font-size:12px">&rarr;</div>
+    <div style="flex:1;padding:.9rem .75rem;background:var(--bg2);border-right:1px solid var(--border);text-align:center;">
+      <p style="font-family:var(--mono);font-size:9px;color:var(--coral);letter-spacing:.1em;margin-bottom:.3rem">CI drift-score</p>
+      <p style="font-size:11px;color:var(--text-dim)">Per commit<br>GDPR/NSM/A11y</p>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 .5rem;color:var(--gold);font-size:11px;font-family:var(--mono);letter-spacing:.1em">GATE</div>
+    <div style="flex:1;padding:.9rem .75rem;background:var(--bg2);border-right:1px solid var(--border);text-align:center;">
+      <p style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:.1em;margin-bottom:.3rem">UAT-sjekkliste</p>
+      <p style="font-size:11px;color:var(--text-dim)">Fagansvarlig<br>sign-off</p>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 .5rem;color:var(--text-dim);font-size:12px">&rarr;</div>
+    <div style="flex:1;padding:.9rem .75rem;background:var(--bg3);border:1px solid var(--border-gold);text-align:center;">
+      <p style="font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:.1em;margin-bottom:.3rem">HTML-spec</p>
+      <p style="font-size:11px;color:var(--text-dim)">QA-rapport<br>+ Art. 11-bevis</p>
+    </div>
   </div>
 </div>
 
@@ -700,16 +854,16 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
     </div>
     <div class="tlt-pd">
       <p class="tlt-pd-label">Fritt &middot; Uke 2&ndash;4</p><h4>Autonom gjennomf&oslash;ring</h4>
-      <p>/implement task for task &mdash; alltid sporbar til spec. Halvtid i uke 3 (/analyze) fanger drift. HTML-spec oppdateres og gap-rapport publiseres.</p>
+      <p>/implement task for task &mdash; alltid sporbar til SC-ID. Halvtid i uke 3 (/analyze) fanger drift. CI-QA kj&oslash;rer p&aring; hvert PR.</p>
       <a href="#metode" class="px">&rarr; Fase 3: Bygg</a>
-      <a href="#html-spec" class="px">&rarr; Gap-visualisering</a>
+      <a href="#qa" class="px">&rarr; Lag 1: l&oslash;pende QA</a>
       <a href="#repos" class="px">&rarr; mcp-spesifik</a>
     </div>
     <div class="tlt-pd tight-bg">
       <p class="tlt-pd-label">Tett &middot; Uke 5&ndash;6</p><h4>Demo og retro</h4>
-      <p>Demo Day: hvert akseptansekriterium er et demo-punkt. HTML-spec er leveransen til forvaltning og compliance.</p>
+      <p>Demo Day: hvert akseptansekriterium er et demo-punkt. UAT m&aring; v&aelig;re gjennomf&oslash;rt. HTML-spec er leveransen til forvaltning og compliance.</p>
       <a href="#metode" class="px">&rarr; Fase 4: Verifiser</a>
-      <a href="#html-spec" class="px">&rarr; HTML-spec til ADO Wiki</a>
+      <a href="#qa" class="px">&rarr; Lag 2: UAT + sign-off</a>
       <a href="#hvorfor-na" class="px">&rarr; Art. 11 dokumentasjon</a>
     </div>
   </div>
@@ -718,59 +872,59 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
 <div class="connect-strip">
   <span class="connect-label">Verkt&oslash;yene som driver syklusen</span>
   <div class="connect-links">
-    <a href="#repos" class="cl">spesifik/spesifik <span class="a">&darr;</span></a>
+    <a href="#repos" class="cl">spesifik-core <span class="a">&darr;</span></a>
     <a href="#repos" class="cl">mcp-spesifik <span class="a">&darr;</span></a>
-    <a href="#repos" class="cl">mcp-no <span class="a">&darr;</span></a>
+    <a href="#repos" class="cl">html-spec-renderer <span class="a">&darr;</span></a>
     <a href="#repos" class="cl">skills-no <span class="a">&darr;</span></a>
   </div>
 </div>
 
 <!-- REPOS -->
 <div class="wrap" id="repos">
-  <p class="s-label">&Oslash;kosystem &middot; Seks repoer</p>
-  <h2 class="s-title">Seks repoer.<br><em>&Eacute;n sammenhengende plattform.</em></h2>
+  <p class="s-label">&Oslash;kosystem &middot; Fem repoer</p>
+  <h2 class="s-title">Fem repoer.<br><em>&Eacute;n sammenhengende plattform.</em></h2>
   <p class="s-lead">Hver del er &aring;pen, separat versjonert, og kan brukes alene. Tagget med hvilke <a href="#metode">faser</a> og <a href="#roller">roller</a> som bruker hvert repo.</p>
   <div class="repos-grid">
     <div class="repo-card">
-      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik</p><p class="repo-title">Metodikken. Hjertet.</p></div><span class="repo-badge">alpha &middot; v0.1</span></div>
-      <p class="repo-desc">Metodikkdokumentet, SPEK.md-skjemaet, slash-kommandoene, hooks og constitution-malen.</p>
-      <ul class="repo-files"><li>METHODOLOGY.md &middot; CONSTITUTION.md</li><li>.claude/commands/ &mdash; /forstaa /spesifiser /bygg</li><li>.claude/skills/ &mdash; spec-author, drift-detector</li><li>conformance/ &mdash; Bronze &middot; S&oslash;lv &middot; Gull</li></ul>
-      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">TLT</span></div>
-      <a href="https://github.com/spesifik/spesifik" target="_blank" class="repo-link">github.com/spesifik/spesifik &rarr;</a>
+      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-core</p><p class="repo-title">Metodikk og kommandoer.</p></div><span class="repo-badge">alpha &middot; v0.1</span></div>
+      <p class="repo-desc">SPEK.md-skjema, SC-ID-standard, slash-kommandoer, hooks, constitution-mal og conformance-suite.</p>
+      <ul class="repo-files"><li>METHODOLOGY.md &middot; SPEK-SCHEMA.md</li><li>.claude/commands/ &mdash; /forstaa /spesifiser /bygg /verifiser</li><li>.claude/skills/ &mdash; spec-author, drift-detector, tdd-enforcer</li><li>conformance/ &mdash; Bronze &middot; S&oslash;lv &middot; Gull</li></ul>
+      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">TLT</span><span class="rpt">QA</span></div>
+      <a href="https://github.com/spesifik/spesifik-core" target="_blank" class="repo-link">github.com/spesifik/spesifik-core &rarr;</a>
     </div>
     <div class="repo-card">
-      <div class="repo-header"><div><p class="repo-name">spesifik/mcp-spesifik</p><p class="repo-title">Sync-motoren. ADO &harr; SPEK.</p></div><span class="repo-badge">alpha</span></div>
-      <p class="repo-desc">Tre MCP-servere: sync-engine, Azure DevOps med custom fields, og Jira-kobling.</p>
-      <ul class="repo-files"><li>validate-spek &middot; sync-bidir &middot; drift-score</li><li>create-feature-from-spek</li><li>conflict resolution + reconciliation</li><li>Webhook + polling fallback</li></ul>
+      <div class="repo-header"><div><p class="repo-name">spesifik/mcp-spesifik</p><p class="repo-title">ADO-sync motoren.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Toveis ADO &harr; SPEK.md via MCP. Drift-score, conflict resolution, Epic-til-spec og spec-til-Tasks.</p>
+      <ul class="repo-files"><li>validate-spek &middot; sync-bidir &middot; drift-score</li><li>create-feature-from-spek &middot; pull-state-to-spek</li><li>conflict resolution + reconciliation</li><li>Webhook + polling fallback</li></ul>
       <div class="repo-phases"><span class="rpt">Fase 3: Bygg</span><span class="rpt">PM</span><span class="rpt">Utvikler</span></div>
       <a href="https://github.com/spesifik/mcp-spesifik" target="_blank" class="repo-link">github.com/spesifik/mcp-spesifik &rarr;</a>
     </div>
     <div class="repo-card">
-      <div class="repo-header"><div><p class="repo-name">spesifik/mcp-no</p><p class="repo-title">Norske offentlige API-er.</p></div><span class="repo-badge">beta</span></div>
-      <p class="repo-desc">MCP-servere for Brreg, SSB, Doffin, NAV, Kartverket og Altinn.</p>
-      <ul class="repo-files"><li>@mcp-no/brreg &mdash; org- og rolleoppslag</li><li>@mcp-no/altinn &mdash; meldinger og skjema</li><li>@mcp-no/nav &middot; @mcp-no/ssb &middot; @mcp-no/kartverket</li><li>@mcp-no/doffin &mdash; anskaffelsesregisteret</li></ul>
-      <div class="repo-phases"><span class="rpt">Fase 3: Bygg</span><span class="rpt">Utvikler</span></div>
-      <a href="https://github.com/spesifik/mcp-no" target="_blank" class="repo-link">github.com/spesifik/mcp-no &rarr;</a>
+      <div class="repo-header"><div><p class="repo-name">spesifik/html-spec-renderer</p><p class="repo-title">HTML-spec artefakt.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Bygger gap-bevisst HTML fra SPEK.md + Figma-refs + ADO + QA-resultater. Publiserer til ADO Wiki. Art. 11-ready.</p>
+      <ul class="repo-files"><li>render-spek &mdash; HTML med QA-status per SC-ID</li><li>gap-detector &mdash; Figma, Stories, A11y, ADO</li><li>uat-checklist-generator &mdash; fra SC-IDer</li><li>annex-iv-exporter &mdash; daterte testlogger</li></ul>
+      <div class="repo-phases"><span class="rpt">Fase 4: Verifiser</span><span class="rpt">QA</span><span class="rpt">Alle roller</span></div>
+      <a href="https://github.com/spesifik/html-spec-renderer" target="_blank" class="repo-link">github.com/spesifik/html-spec-renderer &rarr;</a>
     </div>
     <div class="repo-card">
-      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-templates</p><p class="repo-title">SPEK-maler for offentlig sektor.</p></div><span class="repo-badge">alpha</span></div>
-      <p class="repo-desc">Norske templates for tilskudds&shy;s&oslash;knader, Altinn-skjema, intern fagsystem og citizen feedback.</p>
-      <ul class="repo-files"><li>no/tilskuddssoknad/ &mdash; hele Altinn-flyt</li><li>no/altinn-skjema/ &mdash; innsending + signering</li><li>no/brreg-oppslag/ &mdash; orgnr-validering</li><li>GDPR-vasket &middot; NSM-merket &middot; AI Act-klass.</li></ul>
-      <div class="repo-phases"><span class="rpt">Fase 2: Spesifiser</span><span class="rpt">PM</span></div>
+      <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-templates</p><p class="repo-title">SPEK-maler og startpakker.</p></div><span class="repo-badge">alpha</span></div>
+      <p class="repo-desc">Ferdige SPEK.md-maler for norske offentlig-sektor-m&oslash;nstre. GDPR-vasket, NSM-merket, AI Act-klassifisert.</p>
+      <ul class="repo-files"><li>no/tilskuddssoknad/ &mdash; hele Altinn-flyt med SC-IDer</li><li>no/altinn-skjema/ &mdash; innsending + signering</li><li>no/brreg-oppslag/ &mdash; orgnr-validering</li><li>GDPR-vasket &middot; NSM-merket &middot; AI Act-klass.</li></ul>
+      <div class="repo-phases"><span class="rpt">Fase 1&ndash;2</span><span class="rpt">PM</span><span class="rpt">Designer</span></div>
       <a href="https://github.com/spesifik/spesifik-templates" target="_blank" class="repo-link">github.com/spesifik/spesifik-templates &rarr;</a>
     </div>
     <div class="repo-card">
       <div class="repo-header"><div><p class="repo-name">spesifik/skills-no</p><p class="repo-title">Norske Claude Code-skills.</p></div><span class="repo-badge">alpha</span></div>
-      <p class="repo-desc">Skills som vet hva Datatilsynet, NSM, Digdir og Altinn er. Brukes i alle fire faser.</p>
-      <ul class="repo-files"><li>gdpr-validator &mdash; fnr-, kontonr-deteksjon</li><li>nsm-classifier &mdash; &Aring;PEN/BEGRENSET/KONF</li><li>aiact-classifier &mdash; Annex III mapping</li><li>digdir-designsystem &middot; brreg-lookup</li></ul>
-      <div class="repo-phases"><span class="rpt">Assessment</span><span class="rpt">Fase 2</span><span class="rpt">Fase 4</span></div>
+      <p class="repo-desc">Skills som vet hva Datatilsynet, NSM, Digdir og Altinn er. Kj&oslash;rer som CI-gates i QA-laget.</p>
+      <ul class="repo-files"><li>gdpr-validator &mdash; fnr-, kontonr-deteksjon</li><li>nsm-classifier &mdash; &Aring;PEN/BEGRENSET/KONF</li><li>aiact-classifier &mdash; Annex III mapping</li><li>a11y-checker &middot; digdir-designsystem</li></ul>
+      <div class="repo-phases"><span class="rpt">Assessment</span><span class="rpt">QA Lag 1</span><span class="rpt">Fase 4</span></div>
       <a href="https://github.com/spesifik/skills-no" target="_blank" class="repo-link">github.com/spesifik/skills-no &rarr;</a>
     </div>
     <div class="repo-card">
       <div class="repo-header"><div><p class="repo-name">spesifik/spesifik-reference</p><p class="repo-title">Levende referanseimpl.</p></div><span class="repo-badge">planlagt v0.5</span></div>
-      <p class="repo-desc">Tilskuddsportalen Mini &mdash; et kommunalt tilskuddssystem bygget end-to-end med spesifik.</p>
-      <ul class="repo-files"><li>apps/web (React + Designsystemet)</li><li>apps/api (TypeScript + Altinn)</li><li>docs/specs/ &mdash; 6&ndash;10 fullstendige SPEK.md</li><li>Public ADO project &middot; README walkthrough</li></ul>
-      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">Alle roller</span></div>
+      <p class="repo-desc">Tilskuddsportalen Mini &mdash; end-to-end med public ADO project, alle SPEK.md-er, QA-resultater og HTML-spec publisert.</p>
+      <ul class="repo-files"><li>apps/web (React + Designsystemet)</li><li>apps/api (TypeScript + Altinn)</li><li>docs/specs/ &mdash; 6&ndash;10 SPEK.md med SC-IDer</li><li>Public ADO project &middot; HTML-spec live</li></ul>
+      <div class="repo-phases"><span class="rpt">Alle faser</span><span class="rpt">QA</span><span class="rpt">Alle roller</span></div>
       <a href="https://github.com/spesifik/spesifik-reference" target="_blank" class="repo-link">github.com/spesifik/spesifik-reference &rarr;</a>
     </div>
   </div>
@@ -797,15 +951,15 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
       <span class="cmd">cd</span> mitt-prosjekt &amp;&amp; claude<br><br>
       <span class="cc"># 2. Fase 1: Forst&aring;</span><span class="cphase">Fase 1 &middot; TLT Uke 1</span><br>
       <span class="cmd">/forstaa</span> <span class="cs">"Tilskuddsordning for kulturforeninger"</span><br><br>
-      <span class="cc"># 3. Fase 2: Spesifiser</span><span class="cphase">Fase 2 &middot; Designer + PM signerer</span><br>
+      <span class="cc"># 3. Fase 2: Spesifiser</span><span class="cphase">SC-IDer + EARS-format</span><br>
       <span class="cmd">/spesifiser</span><br>
       <span class="cmd">/review-spek</span><br>
       <div class="code-sep">
-      <span class="cc"># 4. Fase 3: Bygg</span><span class="cphase">Fase 3 &middot; TLT Uke 2&ndash;4</span><br>
-      <span class="cmd">/bygg</span><br><br>
-      <span class="cc"># 5. Fase 4: Verifiser + HTML-spec</span><span class="cphase">Fase 4 &middot; TLT Uke 5&ndash;6</span><br>
-      <span class="cmd">/verifiser</span><br>
-      <span class="cmd">spesifik render</span> <span class="cc"># &rarr; HTML-spec til ADO Wiki</span>
+      <span class="cc"># 4. Fase 3: Bygg + l&oslash;pende QA i CI</span><span class="cphase">Fase 3 &middot; TLT Uke 2&ndash;4</span><br>
+      <span class="cmd">/bygg</span> <span class="cc"># genererer test-skjelett per SC-ID</span><br><br>
+      <span class="cc"># 5. Fase 4: Verifiser &mdash; UAT-sjekkliste + HTML-spec</span><span class="cphase">Fase 4 &middot; TLT Uke 5&ndash;6</span><br>
+      <span class="cmd">/verifiser</span> <span class="cc"># genererer UAT-sjekkliste fra SC-IDer</span><br>
+      <span class="cmd">spesifik render</span> <span class="cc"># &rarr; HTML-spec + Art. 11 til ADO Wiki</span>
       </div>
       <div class="code-sep">
       <span class="cc"># Brownfield? Generer SPEK fra eksisterende kodebase:</span><br>
@@ -852,9 +1006,9 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
   <div class="footer-grid">
     <div><p class="footer-brand">spesifik</p><p class="footer-tagline">Spec-driven utvikling for norsk offentlig sektor.<br>&Aring;pen kildekode under EUPL-1.2.</p></div>
     <div class="footer-col"><h4>Repoer</h4><ul>
-      <li><a href="https://github.com/spesifik/spesifik" target="_blank">spesifik</a></li>
+      <li><a href="https://github.com/spesifik/spesifik-core" target="_blank">spesifik-core</a></li>
       <li><a href="https://github.com/spesifik/mcp-spesifik" target="_blank">mcp-spesifik</a></li>
-      <li><a href="https://github.com/spesifik/mcp-no" target="_blank">mcp-no</a></li>
+      <li><a href="https://github.com/spesifik/html-spec-renderer" target="_blank">html-spec-renderer</a></li>
       <li><a href="https://github.com/spesifik/spesifik-templates" target="_blank">templates</a></li>
       <li><a href="https://github.com/spesifik/skills-no" target="_blank">skills-no</a></li>
     </ul></div>
@@ -864,6 +1018,7 @@ footer{border-top:1px solid var(--border);padding:3rem 2rem;max-width:960px;marg
       <li><a href="#roller">Rolleendringer</a></li>
       <li><a href="#html-spec">HTML-spec</a></li>
       <li><a href="#metode">Fire faser</a></li>
+      <li><a href="#qa">QA som r&oslash;d tr&aring;d</a></li>
       <li><a href="#tlt">TLT-syklus</a></li>
       <li><a href="#start">Quickstart</a></li>
     </ul></div>
